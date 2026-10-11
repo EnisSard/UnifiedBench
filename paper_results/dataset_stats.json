@@ -1,0 +1,370 @@
+{
+  "total_contracts": 595,
+  "source_totals": {
+    "solidifi": 350,
+    "smartbugs": 125,
+    "cgt": 120
+  },
+  "per_class_per_source": {
+    "access_control": {
+      "solidifi": 50,
+      "smartbugs": 18,
+      "cgt": 3,
+      "realworld": 21,
+      "total": 71
+    },
+    "arithmetic": {
+      "solidifi": 50,
+      "smartbugs": 15,
+      "cgt": 64,
+      "realworld": 79,
+      "total": 129
+    },
+    "front_running": {
+      "solidifi": 50,
+      "smartbugs": 4,
+      "cgt": 16,
+      "realworld": 20,
+      "total": 70
+    },
+    "reentrancy": {
+      "solidifi": 50,
+      "smartbugs": 31,
+      "cgt": 17,
+      "realworld": 48,
+      "total": 98
+    },
+    "time_manipulation": {
+      "solidifi": 50,
+      "smartbugs": 5,
+      "cgt": 1,
+      "realworld": 6,
+      "total": 56
+    },
+    "unchecked_low_level_calls": {
+      "solidifi": 100,
+      "smartbugs": 52,
+      "cgt": 19,
+      "realworld": 71,
+      "total": 171
+    }
+  },
+  "groups": {
+    "total": 214,
+    "solidifi": 35,
+    "realworld": 179,
+    "singletons": 151,
+    "largest": [
+      14,
+      14,
+      21,
+      21,
+      28
+    ],
+    "solidifi_base_contracts": 50
+  },
+  "realworld_candidates": 509,
+  "realworld_included": 245,
+  "realworld_excluded": 264,
+  "exclusion_reasons": {
+    "Excluded (multi_label)": 261,
+    "Excluded (exact_duplicate)": 3
+  },
+  "excluded_multilabel_label_sets": {
+    "arithmetic+front_running+unchecked_low_level_calls": 123,
+    "reentrancy+unchecked_low_level_calls": 5,
+    "arithmetic+front_running": 26,
+    "arithmetic+reentrancy": 79,
+    "access_control+arithmetic+front_running+reentrancy": 1,
+    "arithmetic+front_running+reentrancy": 7,
+    "front_running+reentrancy": 3,
+    "arithmetic+reentrancy+unchecked_low_level_calls": 6,
+    "front_running+unchecked_low_level_calls": 3,
+    "arithmetic+unchecked_low_level_calls": 5,
+    "access_control+arithmetic+front_running+unchecked_low_level_calls": 2,
+    "arithmetic+front_running+reentrancy+unchecked_low_level_calls": 1
+  },
+  "cgt_included_by_origin": {
+    "CGT (Zeus)": 75,
+    "CGT (EthRacer)": 8,
+    "CGT (Doublade+Zeus)": 1,
+    "CGT (ContractFuzzer)": 7,
+    "CGT (Doublade)": 3,
+    "CGT (eThor)": 15,
+    "CGT (Zeus+eThor)": 1,
+    "CGT (Doublade+NPChecker+Zeus)": 1,
+    "CGT (CodeSmells)": 6,
+    "CGT (CodeSmells+ContractFuzzer)": 1,
+    "CGT (NPChecker)": 1,
+    "CGT (NPChecker+Zeus)": 1
+  },
+  "folds_seed_42": [
+    {
+      "fold": 1,
+      "n_train": 507,
+      "n_test": 88,
+      "test_solidifi": 35,
+      "test_realworld": 53,
+      "per_class": {
+        "access_control": {
+          "total": 13,
+          "solidifi": 5,
+          "realworld": 8
+        },
+        "arithmetic": {
+          "total": 19,
+          "solidifi": 5,
+          "realworld": 14
+        },
+        "front_running": {
+          "total": 13,
+          "solidifi": 5,
+          "realworld": 8
+        },
+        "reentrancy": {
+          "total": 19,
+          "solidifi": 5,
+          "realworld": 14
+        },
+        "time_manipulation": {
+          "total": 7,
+          "solidifi": 5,
+          "realworld": 2
+        },
+        "unchecked_low_level_calls": {
+          "total": 17,
+          "solidifi": 10,
+          "realworld": 7
+        }
+      }
+    },
+    {
+      "fold": 2,
+      "n_train": 480,
+      "n_test": 115,
+      "test_solidifi": 77,
+      "test_realworld": 38,
+      "per_class": {
+        "access_control": {
+          "total": 13,
+          "solidifi": 11,
+          "realworld": 2
+        },
+        "arithmetic": {
+          "total": 30,
+          "solidifi": 11,
+          "realworld": 19
+        },
+        "front_running": {
+          "total": 14,
+          "solidifi": 11,
+          "realworld": 3
+        },
+        "reentrancy": {
+          "total": 15,
+          "solidifi": 11,
+          "realworld": 4
+        },
+        "time_manipulation": {
+          "total": 11,
+          "solidifi": 11,
+          "realworld": 0
+        },
+        "unchecked_low_level_calls": {
+          "total": 32,
+          "solidifi": 22,
+          "realworld": 10
+        }
+      }
+    },
+    {
+      "fold": 3,
+      "n_train": 454,
+      "n_test": 141,
+      "test_solidifi": 84,
+      "test_realworld": 57,
+      "per_class": {
+        "access_control": {
+          "total": 17,
+          "solidifi": 12,
+          "realworld": 5
+        },
+        "arithmetic": {
+          "total": 23,
+          "solidifi": 12,
+          "realworld": 11
+        },
+        "front_running": {
+          "total": 17,
+          "solidifi": 12,
+          "realworld": 5
+        },
+        "reentrancy": {
+          "total": 29,
+          "solidifi": 12,
+          "realworld": 17
+        },
+        "time_manipulation": {
+          "total": 13,
+          "solidifi": 12,
+          "realworld": 1
+        },
+        "unchecked_low_level_calls": {
+          "total": 42,
+          "solidifi": 24,
+          "realworld": 18
+        }
+      }
+    },
+    {
+      "fold": 4,
+      "n_train": 398,
+      "n_test": 197,
+      "test_solidifi": 140,
+      "test_realworld": 57,
+      "per_class": {
+        "access_control": {
+          "total": 22,
+          "solidifi": 20,
+          "realworld": 2
+        },
+        "arithmetic": {
+          "total": 36,
+          "solidifi": 20,
+          "realworld": 16
+        },
+        "front_running": {
+          "total": 24,
+          "solidifi": 20,
+          "realworld": 4
+        },
+        "reentrancy": {
+          "total": 27,
+          "solidifi": 20,
+          "realworld": 7
+        },
+        "time_manipulation": {
+          "total": 20,
+          "solidifi": 20,
+          "realworld": 0
+        },
+        "unchecked_low_level_calls": {
+          "total": 68,
+          "solidifi": 40,
+          "realworld": 28
+        }
+      }
+    },
+    {
+      "fold": 5,
+      "n_train": 541,
+      "n_test": 54,
+      "test_solidifi": 14,
+      "test_realworld": 40,
+      "per_class": {
+        "access_control": {
+          "total": 6,
+          "solidifi": 2,
+          "realworld": 4
+        },
+        "arithmetic": {
+          "total": 21,
+          "solidifi": 2,
+          "realworld": 19
+        },
+        "front_running": {
+          "total": 2,
+          "solidifi": 2,
+          "realworld": 0
+        },
+        "reentrancy": {
+          "total": 8,
+          "solidifi": 2,
+          "realworld": 6
+        },
+        "time_manipulation": {
+          "total": 5,
+          "solidifi": 2,
+          "realworld": 3
+        },
+        "unchecked_low_level_calls": {
+          "total": 12,
+          "solidifi": 4,
+          "realworld": 8
+        }
+      }
+    }
+  ],
+  "test_fold_sizes_by_repeat_seed": {
+    "42": [
+      88,
+      115,
+      141,
+      197,
+      54
+    ],
+    "43": [
+      147,
+      136,
+      116,
+      88,
+      108
+    ],
+    "44": [
+      63,
+      103,
+      134,
+      150,
+      145
+    ],
+    "45": [
+      150,
+      125,
+      154,
+      61,
+      105
+    ],
+    "46": [
+      60,
+      126,
+      123,
+      139,
+      147
+    ],
+    "47": [
+      122,
+      114,
+      158,
+      63,
+      138
+    ],
+    "48": [
+      115,
+      147,
+      134,
+      62,
+      137
+    ],
+    "49": [
+      64,
+      156,
+      120,
+      123,
+      132
+    ],
+    "50": [
+      137,
+      106,
+      62,
+      154,
+      136
+    ],
+    "51": [
+      131,
+      124,
+      152,
+      62,
+      126
+    ]
+  }
+}

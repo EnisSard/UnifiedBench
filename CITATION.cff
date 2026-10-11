@@ -1,0 +1,72 @@
+cff-version: 1.2.0
+message: "If you use UnifiedBench in your research, please cite it as below."
+title: "UnifiedBench: A Cross-Dataset Benchmark for Multi-Class Smart Contract Vulnerability Classification"
+type: software
+license: MIT
+repository-code: "https://github.com/EnisSard/UnifiedBench"
+date-released: 2026-10-11
+keywords:
+  - smart contract vulnerability classification
+  - deep learning
+  - machine learning
+  - SmartBugs
+  - SolidiFI
+  - Solidity
+authors:
+  - family-names: "Ozdag"
+    given-names: "Mesut"
+    affiliation: "Karabuk University, Vocational School of Information Technology"
+  - family-names: "Sardogan"
+    given-names: "Enishan"
+    affiliation: "Karabuk University, Department of Computer Engineering"
+  - family-names: "Gazel"
+    given-names: "Necmeddin"
+    affiliation: "Karabuk University, Department of Computer Engineering"
+  - family-names: "Karahaliloz"
+    given-names: "Ali"
+    affiliation: "Karabuk University, Department of Computer Engineering"
+  - family-names: "Chachengwa"
+    given-names: "Crispen"
+    affiliation: "University of Central Florida, College of Business"
+  - family-names: "Luengo"
+    given-names: "Carlos"
+    affiliation: "University of Central Florida, College of Business"
+  - family-names: "Karas"
+    given-names: "Ismail Rakip"
+    affiliation: "Karabuk University, Department of Computer Engineering"
+  - family-names: "Kirisik"
+    given-names: "Fatih"
+    affiliation: "Karabuk University, Faculty of Economics and Administrative Sciences"
+
+
+preferred-citation:
+  type: unpublished
+  notes: "Manuscript submitted for publication"
+  title: "UnifiedBench: A Cross-Dataset Benchmark for Multi-Class Smart Contract Vulnerability Classification"
+  year: 2026
+  authors:
+    - family-names: "Ozdag"
+      given-names: "Mesut"
+      affiliation: "Karabuk University, Vocational School of Information Technology"
+    - family-names: "Sardogan"
+      given-names: "Enishan"
+      affiliation: "Karabuk University, Department of Computer Engineering"
+    - family-names: "Gazel"
+      given-names: "Necmeddin"
+      affiliation: "Karabuk University, Department of Computer Engineering"
+    - family-names: "Karahaliloz"
+      given-names: "Ali"
+      affiliation: "Karabuk University, Department of Computer Engineering"
+    - family-names: "Chachengwa"
+      given-names: "Crispen"
+      affiliation: "University of Central Florida, College of Business"
+    - family-names: "Luengo"
+      given-names: "Carlos"
+      affiliation: "University of Central Florida, College of Business"
+    - family-names: "Karas"
+      given-names: "Ismail Rakip"
+      affiliation: "Karabuk University, Department of Computer Engineering"
+    - family-names: "Kirisik"
+      given-names: "Fatih"
+      affiliation: "Karabuk University, Faculty of Economics and Administrative Sciences"
+  # Once published: change type to article and add journal, volume, issue and doi.

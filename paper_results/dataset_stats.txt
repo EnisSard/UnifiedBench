@@ -1,0 +1,46 @@
+==========================================================================
+  UNIFIEDBENCH -- 595 contracts
+==========================================================================
+  Class                        SolidiFI SmartBugs   CGT RealWorld  Total
+  ----------------------------------------------------------------------
+  access_control                     50        18     3        21     71
+  arithmetic                         50        15    64        79    129
+  front_running                      50         4    16        20     70
+  reentrancy                         50        31    17        48     98
+  time_manipulation                  50         5     1         6     56
+  unchecked_low_level_calls         100        52    19        71    171
+  ----------------------------------------------------------------------
+  TOTAL                             350       125   120       245    595
+
+  SolidiFI: 350 files from 50 base contracts
+  Clone-family groups: 214 (SolidiFI 35, real-world 179); singletons 151; largest [14, 14, 21, 21, 28]
+  Real-world candidates: 509 -> included 245, excluded 264
+  Exclusion reasons: {'Excluded (multi_label)': 261, 'Excluded (exact_duplicate)': 3}
+  Excluded multi-label CGT label sets: {'arithmetic+front_running+unchecked_low_level_calls': 123, 'arithmetic+reentrancy': 79, 'arithmetic+front_running': 26, 'arithmetic+front_running+reentrancy': 7, 'arithmetic+reentrancy+unchecked_low_level_calls': 6, 'reentrancy+unchecked_low_level_calls': 5, 'arithmetic+unchecked_low_level_calls': 5, 'front_running+reentrancy': 3, 'front_running+unchecked_low_level_calls': 3, 'access_control+arithmetic+front_running+unchecked_low_level_calls': 2, 'access_control+arithmetic+front_running+reentrancy': 1, 'arithmetic+front_running+reentrancy+unchecked_low_level_calls': 1}
+  Included CGT contracts by originating campaign(s): {'CGT (Zeus)': 75, 'CGT (eThor)': 15, 'CGT (EthRacer)': 8, 'CGT (ContractFuzzer)': 7, 'CGT (CodeSmells)': 6, 'CGT (Doublade)': 3, 'CGT (Doublade+Zeus)': 1, 'CGT (Zeus+eThor)': 1, 'CGT (Doublade+NPChecker+Zeus)': 1, 'CGT (CodeSmells+ContractFuzzer)': 1, 'CGT (NPChecker)': 1, 'CGT (NPChecker+Zeus)': 1}
+
+  FOLD TEST-SET DISTRIBUTION, seed 42  (total (solidifi/realworld))
+  ----------------------------------------------------------------------
+  Class                            F1       F2       F3       F4       F5
+  access_control              13(5/8) 13(11/2) 17(12/5) 22(20/2)   6(2/4)
+  arithmetic                 19(5/14)30(11/19)23(12/11)36(20/16) 21(2/19)
+  front_running               13(5/8) 14(11/3) 17(12/5) 24(20/4)   2(2/0)
+  reentrancy                 19(5/14) 15(11/4)29(12/17) 27(20/7)   8(2/6)
+  time_manipulation            7(5/2) 11(11/0) 13(12/1) 20(20/0)   5(2/3)
+  unchecked_low_level_calls  17(10/7)32(22/10)42(24/18)68(40/28)  12(4/8)
+  ----------------------------------------------------------------------
+  n_test                           88      115      141      197       54
+  test solidifi                    35       77       84      140       14
+  test realworld                   53       38       57       57       40
+
+  Test-fold sizes for every repeat seed:
+    seed 42: [88, 115, 141, 197, 54]
+    seed 43: [147, 136, 116, 88, 108]
+    seed 44: [63, 103, 134, 150, 145]
+    seed 45: [150, 125, 154, 61, 105]
+    seed 46: [60, 126, 123, 139, 147]
+    seed 47: [122, 114, 158, 63, 138]
+    seed 48: [115, 147, 134, 62, 137]
+    seed 49: [64, 156, 120, 123, 132]
+    seed 50: [137, 106, 62, 154, 136]
+    seed 51: [131, 124, 152, 62, 126]

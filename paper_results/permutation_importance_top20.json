@@ -1,0 +1,122 @@
+{
+  "block_timestamp": {
+    "rank": 1,
+    "mean_decrease_f1": 0.128177,
+    "std": 0.043056,
+    "feature_type": "static_feature"
+  },
+  "require_statements": {
+    "rank": 2,
+    "mean_decrease_f1": 0.072094,
+    "std": 0.026014,
+    "feature_type": "static_feature"
+  },
+  "transfer_calls": {
+    "rank": 3,
+    "mean_decrease_f1": 0.064318,
+    "std": 0.031496,
+    "feature_type": "static_feature"
+  },
+  "unchecked_math": {
+    "rank": 4,
+    "mean_decrease_f1": 0.046765,
+    "std": 0.023628,
+    "feature_type": "static_feature"
+  },
+  "send_calls": {
+    "rank": 5,
+    "mean_decrease_f1": 0.032893,
+    "std": 0.011564,
+    "feature_type": "static_feature"
+  },
+  "now_usage": {
+    "rank": 6,
+    "mean_decrease_f1": 0.01001,
+    "std": 0.010174,
+    "feature_type": "static_feature"
+  },
+  "function_count": {
+    "rank": 7,
+    "mean_decrease_f1": 0.008755,
+    "std": 0.012949,
+    "feature_type": "static_feature"
+  },
+  "MiniLM_196": {
+    "rank": 8,
+    "mean_decrease_f1": 0.003985,
+    "std": 0.005055,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_99": {
+    "rank": 9,
+    "mean_decrease_f1": 0.00339,
+    "std": 0.003874,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_220": {
+    "rank": 10,
+    "mean_decrease_f1": 0.003234,
+    "std": 0.004696,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_146": {
+    "rank": 11,
+    "mean_decrease_f1": 0.003222,
+    "std": 0.006938,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_169": {
+    "rank": 12,
+    "mean_decrease_f1": 0.002818,
+    "std": 0.003449,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_284": {
+    "rank": 13,
+    "mean_decrease_f1": 0.002703,
+    "std": 0.003916,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_96": {
+    "rank": 14,
+    "mean_decrease_f1": 0.002697,
+    "std": 0.0077,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_355": {
+    "rank": 15,
+    "mean_decrease_f1": 0.002543,
+    "std": 0.004888,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_150": {
+    "rank": 16,
+    "mean_decrease_f1": 0.002327,
+    "std": 0.005042,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_128": {
+    "rank": 17,
+    "mean_decrease_f1": 0.002123,
+    "std": 0.00224,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_235": {
+    "rank": 18,
+    "mean_decrease_f1": 0.002116,
+    "std": 0.00249,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_199": {
+    "rank": 19,
+    "mean_decrease_f1": 0.002015,
+    "std": 0.004732,
+    "feature_type": "semantic_embedding"
+  },
+  "MiniLM_24": {
+    "rank": 20,
+    "mean_decrease_f1": 0.001904,
+    "std": 0.002998,
+    "feature_type": "semantic_embedding"
+  }
+}
