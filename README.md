@@ -1,4 +1,4 @@
-# UnifiedBench
+# UnifiedBench: A Cross-Dataset Benchmark for Multi-Class Smart Contract Vulnerability Classification
 
 Code and benchmark-construction pipeline for the paper:
 
