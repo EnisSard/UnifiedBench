@@ -16,11 +16,13 @@ Builds the UnifiedBench dataset from the source corpora cloned by setup_data.py:
 
 Selection rules
   * SolidiFI: every injected contract of the seven weakness folders that map onto
-    the six canonical classes.
-  * SmartBugs Curated: every file of the six canonical DASP folders (125 files).
-    One contract (0x627fa62...) is filed under both reentrancy and
-    unchecked_low_level_calls; both files are kept, each with its folder label, and
-    their identical sources put them in the same clone family.
+    the six canonical classes (350 contracts).
+  * SmartBugs Curated: canonical DASP folders (125 candidate files).
+    To maintain single-label classification integrity (consistent with CGT's
+    --cgt-multilabel drop policy), contracts filed under multiple distinct categories
+    with identical normalized code (such as 0x627fa62... in reentrancy and
+    unchecked_low_level_calls) are excluded as multi-label. This leaves 123 unambiguous
+    single-label SmartBugs contracts.
   * CGT: every entry whose property holds, whose SWC code maps onto a canonical class
     (entries originating from SolidiFI are skipped) and whose PRAGMA-INSENSITIVE
     fingerprint fp_sol2 names a stored source file, source/<fp_sol2>.sol. CGT stores
@@ -34,8 +36,14 @@ Selection rules
         drop    (default) exclude them; only unambiguous single-label contracts remain
         rarest  keep them under the class that is rarest among the CGT candidates
   * Exact duplicates (same comment/whitespace-stripped source): SmartBugs Curated
-    contracts are always kept; a CGT contract identical to an already-kept file is
+    contracts are kept unless multi-label; a CGT contract identical to an already-kept file is
     excluded.
+  * Comment stripping (Annotation Leakage Prevention): All comments (// and /* ... */)
+    are stripped from contract source code saved for model training to prevent ground-truth
+    label leakage from SmartBugs curator tags (e.g. '@vulnerable_at_lines',
+    '// <yes> <report> CATEGORY').
+
+Total corpus size: 350 (SolidiFI) + 123 (SmartBugs) + 120 (CGT) = 593 contracts.
 
 Clone-family groups (the key StratifiedGroupKFold uses, so a family never spans
 a fold boundary) are built with Union-Find over the WHOLE corpus:
@@ -110,14 +118,17 @@ SOLIDIFI_MAP = {
 # Normalisation, hashing, similarity
 # ──────────────────────────────────────────────
 
-def strip_comments(code: str) -> str:
-    code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
-    return re.sub(r'//.*', '', code)
+from train.text_utils import strip_comments  # string-aware; shared with the data loader
+
+
+_STRING_LITERAL = re.compile(r'"(?:\\.|[^"\\\n])*"|\'(?:\\.|[^\'\\\n])*\'')
 
 
 def normalize_solidity(code: str) -> str:
-    """Strip comments and all whitespace (used for exact-duplicate hashing)."""
-    return re.sub(r'\s+', '', strip_comments(code))
+    """Strip comments, the contents of string literals, and all whitespace (used for
+    exact-duplicate hashing): copies that differ only in an embedded key, URL or
+    message string count as duplicates."""
+    return re.sub(r'\s+', '', _STRING_LITERAL.sub('""', strip_comments(code)))
 
 
 def norm_hash(code: str) -> str:
@@ -267,7 +278,7 @@ def collect_cgt() -> list[dict]:
 # Builder
 # ──────────────────────────────────────────────
 
-def build_datasets(cgt_multilabel: str = "drop") -> None:
+def build_datasets(cgt_multilabel: str = "drop", keep_comments: bool = False) -> None:
     synth = collect_solidifi()
     sb = collect_smartbugs()
     cgt = collect_cgt()
@@ -288,10 +299,27 @@ def build_datasets(cgt_multilabel: str = "drop") -> None:
     cgt_freq = Counter(c for r in cgt for c in r["classes"])
 
     # ---- inclusion decisions ----------------------------------------------------
+    # Check for multi-label contracts in SmartBugs (contracts with same normalised hash under multiple categories)
+    sb_by_hash = defaultdict(list)
+    for r in sb:
+        sb_by_hash[r["norm_hash"]].append(r)
+
     kept_hashes = {}
-    for r in sb:                                           # SmartBugs Curated is never dropped
-        r["included"], r["exclusion_reason"] = True, ""
-        kept_hashes.setdefault(r["norm_hash"], r["dest_name"])
+    for h, recs in sb_by_hash.items():
+        distinct_cats = {r["category"] for r in recs}
+        if len(distinct_cats) > 1:
+            # Multi-label conflicting contract in SmartBugs (e.g. 0x627fa62... in reentrancy and unchecked_low_level_calls)
+            # Exclude to ensure strict single-label purity, consistent with --cgt-multilabel drop.
+            for r in recs:
+                r["included"], r["exclusion_reason"] = False, "multi_label"
+        else:
+            for idx, r in enumerate(recs):
+                if idx == 0:
+                    r["included"], r["exclusion_reason"] = True, ""
+                    kept_hashes.setdefault(r["norm_hash"], r["dest_name"])
+                else:
+                    r["included"], r["exclusion_reason"] = False, "exact_duplicate"
+
     for r in cgt:
         r["included"], r["exclusion_reason"] = False, ""
         if r["norm_hash"] in kept_hashes:
@@ -337,18 +365,24 @@ def build_datasets(cgt_multilabel: str = "drop") -> None:
         r["group_identifier"] = group_of_root[root]
     # excluded duplicates point at the group of the file they duplicate
     group_by_hash = {r["norm_hash"]: r["group_identifier"] for r in pool}
-    for r in cgt:
-        if not r["included"]:
+    for r in sb + cgt:
+        if not r["included"] and not r.get("group_identifier"):
             r["group_identifier"] = group_by_hash.get(r["norm_hash"], "")
 
     # ---- write files ----------------------------------------------------------
-    for d in (SYNTHETIC_DIR, EXPANDED_DIR):
+    # "keep" writes to separate folders so the single-label benchmark stays intact
+    synth_dir, exp_dir = SYNTHETIC_DIR, EXPANDED_DIR
+    if cgt_multilabel == "keep":
+        synth_dir = SYNTHETIC_DIR.with_name(SYNTHETIC_DIR.name + "_multilabel")
+        exp_dir = EXPANDED_DIR.with_name(EXPANDED_DIR.name + "_multilabel")
+    for d in (synth_dir, exp_dir):
         if d.exists(): shutil.rmtree(d)
         for cat in CANONICAL_LABELS: (d / cat).mkdir(parents=True)
 
     for r in synth:
-        shutil.copy2(r["source_path"], SYNTHETIC_DIR / r["category"] / r["dest_name"])
-    with (SYNTHETIC_DIR / "synthetic_manifest.csv").open("w", newline="", encoding="utf-8") as f:
+        code_out = strip_comments(r["code"]) if not keep_comments else r["code"]
+        (synth_dir / r["category"] / r["dest_name"]).write_text(code_out, encoding="utf-8")
+    with (synth_dir / "synthetic_manifest.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["contract_identifier", "category", "solidifi_folder",
                                           "base_contract", "source_hashes", "group_identifier"])
         w.writeheader()
@@ -360,7 +394,8 @@ def build_datasets(cgt_multilabel: str = "drop") -> None:
     rows = []
     for r in sb + cgt:
         if r["included"]:
-            shutil.copy2(r["source_path"], EXPANDED_DIR / r["category"] / r["dest_name"])
+            code_out = strip_comments(r["code"]) if not keep_comments else r["code"]
+            (exp_dir / r["category"] / r["dest_name"]).write_text(code_out, encoding="utf-8")
         rows.append({
             "original_dataset": r["source_dataset"],
             "dataset_version": r["dataset_version"],
@@ -374,7 +409,7 @@ def build_datasets(cgt_multilabel: str = "drop") -> None:
             "group_identifier": r["group_identifier"],
             "inclusion_decision": "Included" if r["included"] else f"Excluded ({r['exclusion_reason']})",
         })
-    with (EXPANDED_DIR / "reproducibility_manifest.csv").open("w", newline="", encoding="utf-8") as f:
+    with (exp_dir / "reproducibility_manifest.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
@@ -385,8 +420,9 @@ def build_datasets(cgt_multilabel: str = "drop") -> None:
     rw_groups = {r["group_identifier"] for r in inc_rw}
     print(f"  [SYNTHETIC]  {len(synth)} SolidiFI contracts from "
           f"{len({r['base_contract'] for r in synth})} base contracts -> {len(sf_groups)} groups")
-    print(f"  [REAL-WORLD] SmartBugs Curated {len(sb)}; CGT candidate files {len(cgt)} -> "
-          f"{sum(r['included'] for r in cgt)} included "
+    print(f"  [REAL-WORLD] SmartBugs Curated {len(sb)} -> {sum(r['included'] for r in sb)} included "
+          f"({dict(Counter(r['exclusion_reason'] for r in sb if not r['included']))} excluded); "
+          f"CGT candidate files {len(cgt)} -> {sum(r['included'] for r in cgt)} included "
           f"({dict(Counter(r['exclusion_reason'] for r in cgt if not r['included']))} excluded); "
           f"multi-label policy = {cgt_multilabel}")
     print(f"  [GROUPS]     {len(sf_groups | rw_groups)} total "
@@ -395,19 +431,22 @@ def build_datasets(cgt_multilabel: str = "drop") -> None:
     print(f"  {'class':<28}{'SolidiFI':>9}{'SmartBugs':>10}{'CGT':>6}{'Total':>7}")
     for cat in CANONICAL_LABELS:
         a = sum(r["category"] == cat for r in synth)
-        b = sum(r["category"] == cat for r in sb)
+        b = sum(r["category"] == cat for r in sb if r["included"])
         c = sum(r["category"] == cat for r in cgt if r["included"])
         print(f"  {cat:<28}{a:>9}{b:>10}{c:>6}{a + b + c:>7}")
-    print(f"  {'TOTAL':<28}{len(synth):>9}{len(sb):>10}{sum(r['included'] for r in cgt):>6}"
+    print(f"  {'TOTAL':<28}{len(synth):>9}{sum(r['included'] for r in sb):>10}{sum(r['included'] for r in cgt):>6}"
           f"{len(synth) + len(inc_rw):>7}")
-
-
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="Build the UnifiedBench dataset.")
-    ap.add_argument("--cgt-multilabel", choices=["drop", "rarest"], default="drop",
-                    help="what to do with CGT contracts asserting more than one canonical class")
+    ap.add_argument("--cgt-multilabel", choices=["drop", "rarest", "keep"], default="drop",
+                    help="what to do with CGT contracts asserting more than one canonical class: drop them "
+                         "(benchmark), file them under their rarest class (rarest), or keep them with their "
+                         "full label set in separate *_multilabel folders (keep; used by profile runB)")
+    ap.add_argument("--keep-comments", action="store_true", default=False,
+                    help="preserve comments in written contracts (default: False, comments stripped to prevent annotation leakage)")
     args = ap.parse_args()
     print("======================================================")
     print("  UnifiedBench dataset construction")
     print("======================================================")
-    build_datasets(args.cgt_multilabel)
+    build_datasets(args.cgt_multilabel, keep_comments=args.keep_comments)
+

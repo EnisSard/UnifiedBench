@@ -32,9 +32,8 @@ from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader as PyGDataLoader
 from torch_geometric.nn import GCNConv, global_mean_pool, global_max_pool
 
-import train.evaluate as _ev
 from train.config import NUM_LABELS, get_seed
-from train.evaluate import compute_metrics, aggregate_folds, get_class_weights
+from train.evaluate import compute_metrics, get_sample_weights, run_folds
 from sentence_transformers import SentenceTransformer
 
 
@@ -143,11 +142,17 @@ def _graphs(texts: List[str], labels: List[int], device: str) -> List[Data]:
     built once per process and reused by every fold, repeat and LOSO direction."""
     import hashlib
     key = hashlib.sha256("\x00".join(texts).encode("utf-8", "ignore")).hexdigest()
+    from train.config import CACHE_DIR
+    cache_file = CACHE_DIR / f"graphs_{key[:16]}.pt"
+    if key not in _GRAPH_CACHE and cache_file.exists():
+        _GRAPH_CACHE[key] = torch.load(cache_file, weights_only=False)
     if key not in _GRAPH_CACHE:
         print("  Building contract graphs with sentence-transformer embeddings...")
         embedder = SentenceTransformer("all-MiniLM-L6-v2", device=device)
         t0_graph = time.time()
         _GRAPH_CACHE[key] = [build_contract_graph(t, embedder, device=device) for t in texts]
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        torch.save(_GRAPH_CACHE[key], cache_file)
         print(f"  Constructed {len(texts)} contract graphs in {time.time()-t0_graph:.1f}s")
     graphs = []
     for g, y in zip(_GRAPH_CACHE[key], labels):
@@ -162,76 +167,61 @@ def run(
     labels: List[int],
     source_datasets: List[str],
     splits: List[Tuple[np.ndarray, np.ndarray]],
+    persist: bool = True,
+    hp: dict | None = None,
 ) -> dict:
+    hp = {**dict(lr=1e-3, epochs=35, hidden=128, dropout=0.5), **(hp or {})}
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"\n[GNN] Initializing GNN (Contract-GCN) on device: {device}")
-    
-    # 1. Feature Extraction / Graph Building (frozen encoder -> cached per process)
     graph_list = _graphs(texts, labels, device)
+    y_arr = np.asarray(labels)
+    src_arr = np.asarray(source_datasets)
 
-    fold_results = []
-
-    print(f"[GNN] Running {len(splits)}-Fold Cross Validation...")
-    for fold_idx, (train_idx, test_idx) in enumerate(splits, start=1):
+    def fold_fn(fold_idx, train_idx, test_idx):
         t_fold = time.time()
-        
-        # Prepare datasets
-        train_graphs = [graph_list[i] for i in train_idx]
+        sw = get_sample_weights(y_arr[train_idx], src_arr[train_idx], train_idx)
+        train_graphs = []
+        for i, w in zip(train_idx, sw):
+            g = graph_list[i].clone()
+            g.w = torch.tensor([w], dtype=torch.float32)
+            train_graphs.append(g)
         test_graphs = [graph_list[i] for i in test_idx]
-        
-        train_labels = [labels[i] for i in train_idx]
-        test_labels = [labels[i] for i in test_idx]
-        test_sources = [source_datasets[i] for i in test_idx]
-        
-        # Compute class weights
-        cw = get_class_weights(train_labels)
-        cw_tensor = torch.tensor(cw, dtype=torch.float32).to(device)
 
         train_loader = PyGDataLoader(train_graphs, batch_size=16, shuffle=True)
         test_loader = PyGDataLoader(test_graphs, batch_size=32, shuffle=False)
 
-        # Initialize model
         torch.manual_seed(get_seed() + fold_idx)
-        model = ContractGCN(in_channels=384, hidden_channels=128, out_channels=NUM_LABELS, dropout=0.5).to(device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)
-        criterion = nn.CrossEntropyLoss(weight=cw_tensor)
+        model = ContractGCN(in_channels=384, hidden_channels=hp["hidden"], out_channels=NUM_LABELS,
+                            dropout=hp["dropout"]).to(device)
+        optimizer = torch.optim.Adam(model.parameters(), lr=hp["lr"], weight_decay=1e-4)
+        criterion = nn.CrossEntropyLoss(reduction='none')
 
-        # Training Loop
         model.train()
-        epochs = 35
-        for epoch in range(epochs):
+        for epoch in range(hp["epochs"]):
             for batch in train_loader:
                 batch = batch.to(device)
                 optimizer.zero_grad()
                 out = model(batch.x, batch.edge_index, batch.batch)
-                loss = criterion(out, batch.y)
+                loss = (criterion(out, batch.y) * batch.w).mean()
                 loss.backward()
                 optimizer.step()
 
-        # Evaluation
         model.eval()
         preds = []
         with torch.no_grad():
             for batch in test_loader:
                 batch = batch.to(device)
                 out = model(batch.x, batch.edge_index, batch.batch)
-                batch_preds = out.argmax(dim=-1).cpu().numpy().tolist()
-                preds.extend(batch_preds)
+                preds.extend(out.argmax(dim=-1).cpu().numpy().tolist())
 
         train_time = time.time() - t_fold
-        metrics = compute_metrics(test_labels, preds, np.array(test_sources))
-        metrics["fold"] = fold_idx
+        metrics = compute_metrics(y_arr[test_idx].tolist(), preds, src_arr[test_idx], idx=test_idx)
         metrics["train_time_s"] = round(train_time, 2)
         metrics["n_train"] = len(train_idx)
         metrics["n_test"] = len(test_idx)
         metrics["test_idx"] = [int(i) for i in test_idx]
+        print(f"  Fold {fold_idx}: macro-F1 = {metrics['macro_f1']:.4f} | Acc = {metrics['accuracy']:.4f} "
+              f"| MCC = {metrics['mcc']:.4f} ({train_time:.1f}s)", flush=True)
+        return metrics
 
-        print(f"  Fold {fold_idx}: macro-F1 = {metrics['macro_f1']:.4f} | Acc = {metrics['accuracy']:.4f} | MCC = {metrics['mcc']:.4f} ({train_time:.1f}s)")
-        fold_results.append(metrics)
-
-    # Aggregation
-    agg = aggregate_folds(fold_results)
-    _ev.save_results("gnn", fold_results, agg)
-    
-    print(f"\n[GNN] Aggregated macro-F1: {agg['macro_f1_mean']:.4f} +/- {agg['macro_f1_std']:.4f}")
-    return {"model": "gnn", "folds": fold_results, "aggregate": agg}
+    return run_folds("gnn", splits, fold_fn, persist=persist)

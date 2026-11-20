@@ -34,8 +34,72 @@ N_REPEATS        = 10
 REPEAT_SEED_BASE = 42
 LOSO_SEEDS       = [42, 43, 44, 45, 46]
 
+# ── Run profile (set with the environment variable UB_PROFILE) ─────────────
+# base  fixes only: comments stripped from inputs, MLP validation split before
+#       augmentation and by clone family, 593-contract dataset
+# runA  base + Transformers read the whole contract in 512-token chunks (MiniLM
+#       likewise in 256-token chunks), SolidiFI weakness-named identifiers renamed
+#       to neutral names, and source-balanced sample weights (SolidiFI and real-world
+#       contracts carry equal total weight in every training split)
+# runB  runA + nested-CV hyperparameter tuning + multi-label CGT contracts +
+#       risk-ranked chunk selection (long contracts keep the chunks with the most
+#       security-relevant operations instead of evenly spaced ones)
+import os as _os
+
+_PROFILES = {
+    "base": dict(chunking=False, neutralize_solidifi=False, source_balance=False, tune=False, multilabel=False, chunk_select="even"),
+    "runA": dict(chunking=True,  neutralize_solidifi=True,  source_balance=True,  tune=False, multilabel=False, chunk_select="even"),
+    "runB": dict(chunking=True,  neutralize_solidifi=True,  source_balance=True,  tune=True,  multilabel=True,  chunk_select="risk"),
+}
+_PROFILE_NAME = _os.environ.get("UB_PROFILE", "base")
+if _PROFILE_NAME not in _PROFILES:
+    raise ValueError(f"UB_PROFILE must be one of {list(_PROFILES)}, got {_PROFILE_NAME!r}")
+PROFILE = dict(name=_PROFILE_NAME, **_PROFILES[_PROFILE_NAME])
+
+# Run B builds its dataset (with the multi-label CGT contracts) into its own folder,
+# so it never overwrites the 593-contract benchmark used by the other profiles.
+if PROFILE["multilabel"]:
+    EXPANDED_DIR = DATA_DIR / "expanded_real_world_set_multilabel"
+    MANIFEST = EXPANDED_DIR / "reproducibility_manifest.csv"
+    SYNTHETIC_DIR = DATA_DIR / "synthetic_benchmark_multilabel"   # same files, group ids
+    SYNTHETIC_MANIFEST = SYNTHETIC_DIR / "synthetic_manifest.csv"  # of the larger pool
+
+# Transformer chunking: at most this many 512-token chunks per contract, spread
+# evenly over the contract when it is longer.
+MAX_CHUNKS = 6
+# MiniLM chunking for the fused vector: at most this many 256-token chunks.
+MINILM_MAX_CHUNKS = 16
+
 # ── Runtime state (seed + output folder of the current run) ──
-_RUNTIME = {"seed": RANDOM_SEED, "results_dir": RESULTS_DIR}
+_RUNTIME = {"seed": RANDOM_SEED, "results_dir": RESULTS_DIR, "groups": None}
+
+
+def set_groups(group_ids) -> None:
+    """Clone-family id of every contract (used for group-aware validation splits)."""
+    _RUNTIME["groups"] = list(group_ids)
+
+
+def get_groups():
+    return _RUNTIME["groups"]
+
+
+# Multi-label rows (profile runB). A contract with label set {A, B} is loaded as one
+# row per label; every row carries the contract key, the full label set and the
+# factor 1/|set|, so the contract's total training weight stays that of one contract.
+# Scoring collapses the rows back to one prediction per contract (see evaluate.py).
+def set_rows(keys, label_sets) -> None:
+    _RUNTIME["rows"] = dict(keys=list(keys), label_sets=[frozenset(s) for s in label_sets])
+
+
+def get_rows():
+    return _RUNTIME.get("rows")
+
+
+STOP_FILE = PROJECT_ROOT / "STOP"
+
+
+class StopRequested(Exception):
+    """Raised between folds when the STOP file exists."""
 
 
 def get_seed() -> int:

@@ -18,68 +18,54 @@ class TorchClassifierWrapper:
         self.device = device
         self.model = None
 
-    def fit(self, X_tr, y_tr, sample_weights=None):
+    def fit(self, X_train, y_train, w_train, X_val, y_val, w_val):
+        """Train on (X_train, y_train) with per-sample weights; early-stop on the
+        separately held-out, never-augmented validation set (X_val, y_val)."""
         torch.manual_seed(get_seed())
-        
         self.model = self.model_class(**self.model_kwargs).to(self.device)
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
-        
-        if sample_weights is not None:
-            unique_classes = np.unique(y_tr)
-            class_weights = np.ones(NUM_LABELS, dtype=np.float32)
-            for c in unique_classes:
-                idx = np.where(y_tr == c)[0][0]
-                class_weights[c] = sample_weights[idx]
-            criterion = nn.CrossEntropyLoss(weight=torch.tensor(class_weights).to(self.device))
-        else:
-            criterion = nn.CrossEntropyLoss()
+        ce = nn.CrossEntropyLoss(reduction='none')
 
-        indices = np.random.default_rng(get_seed()).permutation(len(X_tr))  # seeded early-stopping split
-        val_size = max(1, int(0.1 * len(X_tr)))
-        val_idx, train_idx = indices[:val_size], indices[val_size:]
-        
-        X_train, y_train = X_tr[train_idx], y_tr[train_idx]
-        X_val, y_val = X_tr[val_idx], y_tr[val_idx]
+        def t(a, dt=torch.float32):
+            return torch.tensor(np.asarray(a), dtype=dt)
 
-        train_ds = TensorDataset(torch.tensor(X_train, dtype=torch.float32), torch.tensor(y_train, dtype=torch.long))
-        # Use drop_last=True to prevent batch size of 1 crashing BatchNorm1d during training
+        train_ds = TensorDataset(t(X_train), t(y_train, torch.long), t(w_train))
+        # drop_last=True prevents a batch of size 1 from crashing BatchNorm1d
         train_loader = DataLoader(train_ds, batch_size=self.batch_size, shuffle=True, drop_last=True)
-        
-        val_ds = TensorDataset(torch.tensor(X_val, dtype=torch.float32), torch.tensor(y_val, dtype=torch.long))
+        val_ds = TensorDataset(t(X_val), t(y_val, torch.long), t(w_val))
         val_loader = DataLoader(val_ds, batch_size=self.batch_size, shuffle=False)
 
         best_loss = float('inf')
         patience_counter = 0
+        self.best_state = {k: v.detach().cpu().clone() for k, v in self.model.state_dict().items()}
 
         for epoch in range(self.epochs):
             self.model.train()
-            for X_b, y_b in train_loader:
-                X_b, y_b = X_b.to(self.device), y_b.to(self.device)
+            for X_b, y_b, w_b in train_loader:
+                X_b, y_b, w_b = X_b.to(self.device), y_b.to(self.device), w_b.to(self.device)
                 optimizer.zero_grad()
-                logits = self.model(X_b)
-                loss = criterion(logits, y_b)
+                loss = (ce(self.model(X_b), y_b) * w_b).sum() / w_b.sum()
                 loss.backward()
                 optimizer.step()
 
             self.model.eval()
-            val_loss = 0.0
+            num, den = 0.0, 0.0
             with torch.no_grad():
-                for X_b, y_b in val_loader:
-                    X_b, y_b = X_b.to(self.device), y_b.to(self.device)
-                    logits = self.model(X_b)
-                    val_loss += criterion(logits, y_b).item() * X_b.size(0)
-            val_loss /= len(val_loader.dataset)
+                for X_b, y_b, w_b in val_loader:
+                    X_b, y_b, w_b = X_b.to(self.device), y_b.to(self.device), w_b.to(self.device)
+                    num += (ce(self.model(X_b), y_b) * w_b).sum().item()
+                    den += w_b.sum().item()
+            val_loss = num / max(den, 1e-12)
 
             if val_loss < best_loss - 0.001:
                 best_loss = val_loss
                 patience_counter = 0
-                self.best_state = {k: v.cpu() for k, v in self.model.state_dict().items()}
+                self.best_state = {k: v.detach().cpu().clone() for k, v in self.model.state_dict().items()}
             else:
                 patience_counter += 1
-
             if patience_counter >= self.patience:
                 break
-        
+
         self.model.load_state_dict(self.best_state)
         return self
 
@@ -140,23 +126,49 @@ class HybridVulDetect(nn.Module):
         merged = torch.cat([b1, b2], dim=1)
         return self.classifier(merged)
 
-def run_fused_model_cv(model_name, model_class, texts, labels, source_datasets, splits):
+def group_validation_split(tr_idx, frac=0.1, seed=None):
+    """Positions (into tr_idx) of a ~10% validation slice made of whole clone
+    families, and of the remaining training part. Falls back to a random slice
+    when no clone-family ids are registered."""
+    from train.config import get_groups
+    rng = np.random.default_rng(get_seed() if seed is None else seed)
+    groups = get_groups()
+    n = len(tr_idx)
+    if groups is None:
+        perm = rng.permutation(n)
+        k = max(1, int(frac * n))
+        return perm[k:], perm[:k]
+    g = np.asarray([groups[i] for i in tr_idx], dtype=object)
+    uniq = rng.permutation(np.unique(g))
+    val_groups, size = set(), 0
+    for u in uniq:
+        if size >= frac * n:
+            break
+        val_groups.add(u)
+        size += int((g == u).sum())
+    is_val = np.array([x in val_groups for x in g])
+    return np.where(~is_val)[0], np.where(is_val)[0]
+
+
+def run_fused_model_cv(model_name, model_class, texts, labels, source_datasets, splits, persist=True, hp=None):
+    hp = {**dict(lr=5e-4, hidden=128, dropout=0.5), **(hp or {})}
     from train.features.fused_features import fused_features
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     X_all = fused_features(texts, device=device)
 
-    def train_fn(X_tr, y_tr, cw):
-        # Gaussian-noise augmentation of the training split only; the class-weighted
-        # loss (weights from the original labels) remains the primary imbalance mechanism.
-        X_tr_aug, y_tr_aug = apply_gaussian_augmentation(X_tr, y_tr, NUM_LABELS)
-        sample_weights = np.array([cw[y] for y in y_tr_aug])
+    def train_fn(X_tr, y_tr, sw, tr_idx):
+        # 1) hold out whole clone families for early stopping BEFORE augmentation,
+        # 2) augment only the remaining training part (noisy copies keep their weight).
+        fit_pos, val_pos = group_validation_split(tr_idx)
+        X_fit, y_fit, w_fit = apply_gaussian_augmentation(
+            X_tr[fit_pos], y_tr[fit_pos], NUM_LABELS, weights=sw[fit_pos])
         clf = TorchClassifierWrapper(
             model_class=model_class,
-            model_kwargs={'input_dim': 406, 'hidden_dim': 128, 'num_classes': NUM_LABELS, 'dropout': 0.5},
-            device=device
+            model_kwargs={'input_dim': 406, 'hidden_dim': hp['hidden'], 'num_classes': NUM_LABELS,
+                          'dropout': hp['dropout']},
+            lr=hp['lr'], device=device
         )
-        clf.fit(X_tr_aug, y_tr_aug, sample_weights)
-
+        clf.fit(X_fit, y_fit, w_fit, X_tr[val_pos], y_tr[val_pos], sw[val_pos])
         return clf
 
     def predict_fn(clf, X_te):
@@ -171,4 +183,5 @@ def run_fused_model_cv(model_name, model_class, texts, labels, source_datasets, 
         labels          = labels,
         source_datasets = source_datasets,
         splits          = splits,
+        persist         = persist,
     )

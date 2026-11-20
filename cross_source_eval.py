@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-from train.config import LOSO_SEEDS, RESULTS_DIR, set_seed, set_results_dir
+from train.config import LOSO_SEEDS, RESULTS_DIR, set_seed, set_results_dir, set_groups, StopRequested
 from train.data_loader import load_records
 from train.models import (
     xgboost_model, smartembed_model, eth2vec_model, transformer_model,
@@ -40,6 +40,7 @@ def _run(name, texts, labels, sources, splits):
 
 def run_cross_source(seeds, models, out_root: Path, overwrite: bool = False):
     texts, labels, group_ids, source_datasets, filenames = load_records()
+    set_groups(group_ids)
     src = np.asarray(source_datasets)
     summary_path = out_root / "loso_summary.json"
     summary = json.loads(summary_path.read_text()) if summary_path.exists() else {}
@@ -65,6 +66,9 @@ def run_cross_source(seeds, models, out_root: Path, overwrite: bool = False):
                         set_results_dir(run_dir)
                         try:
                             f1 = _run(name, texts, labels, source_datasets, splits)["aggregate"]["macro_f1_mean"]
+                        except (StopRequested, KeyboardInterrupt) as e:
+                            print(f"[STOPPED] {e or 'Ctrl+C'} -- rerun to resume.", flush=True)
+                            raise SystemExit(3)
                         except Exception as e:
                             print(f"  {name} failed: {e}")
                             continue

@@ -1,38 +1,38 @@
 ====================================================================================================
-  REPEATED STRATIFIED GROUPED 5-FOLD CV   repeats=10 (seeds [42, 43, 44, 45, 46, 47, 48, 49, 50, 51])   fold estimates per model=50   mean n_test/n_train=0.256
+  REPEATED STRATIFIED GROUPED 5-FOLD CV   repeats=10 (seeds [42, 43, 44, 45, 46, 47, 48, 49, 50, 51])   fold estimates per model=50   mean n_test/n_train=0.255
   mean +/- SD over all folds, [95% CI, Nadeau-Bengio corrected t]
 ====================================================================================================
   Model                                       macro-F1                      accuracy                           MCC   s/fold
-  XGBoost (fused)          0.836+/-0.061 [0.772,0.900]   0.826+/-0.062 [0.761,0.891]   0.785+/-0.079 [0.701,0.869]      6.9
-  SmartEmbed (W2V+RF)      0.788+/-0.077 [0.707,0.870]   0.777+/-0.068 [0.705,0.849]   0.725+/-0.087 [0.633,0.817]      3.0
-  ETH2Vec (D2V+SVM)        0.660+/-0.116 [0.537,0.782]   0.645+/-0.097 [0.543,0.747]   0.559+/-0.132 [0.420,0.699]     26.9
-  DeepSolid                0.680+/-0.085 [0.590,0.771]   0.672+/-0.089 [0.578,0.767]   0.609+/-0.103 [0.501,0.718]     18.7
-  HybridVulDetect          0.715+/-0.073 [0.638,0.792]   0.707+/-0.077 [0.625,0.789]   0.651+/-0.088 [0.558,0.744]     17.3
-  CodeBERT                 0.708+/-0.094 [0.609,0.807]   0.709+/-0.092 [0.612,0.806]   0.648+/-0.111 [0.530,0.765]     32.6
-  SmartBERT                0.798+/-0.087 [0.706,0.889]   0.796+/-0.083 [0.708,0.884]   0.748+/-0.103 [0.640,0.857]     32.4
-  GNN (Contract-GCN)       0.842+/-0.064 [0.774,0.909]   0.843+/-0.060 [0.780,0.906]   0.805+/-0.075 [0.726,0.885]      7.8
+  XGBoost (fused)          0.835+/-0.044 [0.789,0.882]   0.825+/-0.042 [0.780,0.869]   0.785+/-0.053 [0.729,0.840]      4.4
+  SmartEmbed (W2V+RF)      0.798+/-0.068 [0.726,0.869]   0.785+/-0.062 [0.719,0.850]   0.735+/-0.078 [0.652,0.817]      1.9
+  ETH2Vec (D2V+SVM)        0.681+/-0.066 [0.612,0.751]   0.665+/-0.058 [0.603,0.726]   0.588+/-0.076 [0.508,0.668]     14.4
+  DeepSolid                0.751+/-0.088 [0.659,0.844]   0.747+/-0.085 [0.657,0.837]   0.707+/-0.088 [0.614,0.800]      8.1
+  HybridVulDetect          0.761+/-0.078 [0.678,0.844]   0.755+/-0.078 [0.673,0.837]   0.714+/-0.084 [0.625,0.802]      7.3
+  CodeBERT                 0.862+/-0.055 [0.804,0.920]   0.855+/-0.061 [0.790,0.920]   0.821+/-0.076 [0.741,0.901]    118.4
+  SmartBERT                0.876+/-0.053 [0.820,0.933]   0.871+/-0.054 [0.814,0.928]   0.841+/-0.067 [0.770,0.911]    118.2
+  GNN (Contract-GCN)       0.830+/-0.063 [0.763,0.897]   0.825+/-0.064 [0.758,0.892]   0.783+/-0.079 [0.700,0.867]      6.4
 
   Pairwise macro-F1: corrected repeated-CV t-test on paired fold differences, Holm-adjusted
   -- difference (row - column)
                           XGBoost (f  SmartEmbed  ETH2Vec (D   DeepSolid  HybridVulD    CodeBERT   SmartBERT  GNN (Contr
-  XGBoost (fused)                 --     +0.048      +0.177*     +0.156      +0.121      +0.128      +0.039      -0.005 
-  SmartEmbed (W2V+RF)        -0.048           --     +0.129      +0.108      +0.073      +0.080      -0.009      -0.053 
-  ETH2Vec (D2V+SVM)          -0.177*     -0.129           --     -0.021      -0.055      -0.049      -0.138      -0.182*
-  DeepSolid                  -0.156      -0.108      +0.021           --     -0.035      -0.028      -0.117      -0.161 
-  HybridVulDetect            -0.121      -0.073      +0.055      +0.035           --     +0.007      -0.083      -0.127 
-  CodeBERT                   -0.128      -0.080      +0.049      +0.028      -0.007           --     -0.089      -0.133 
-  SmartBERT                  -0.039      +0.009      +0.138      +0.117      +0.083      +0.089           --     -0.044 
-  GNN (Contract-GCN)         +0.005      +0.053      +0.182*     +0.161      +0.127      +0.133      +0.044           --
+  XGBoost (fused)                 --     +0.038      +0.154*     +0.084      +0.074      -0.026      -0.041      +0.006 
+  SmartEmbed (W2V+RF)        -0.038           --     +0.117*     +0.047      +0.037      -0.064      -0.078      -0.032 
+  ETH2Vec (D2V+SVM)          -0.154*     -0.117*          --     -0.070      -0.080      -0.181*     -0.195*     -0.149*
+  DeepSolid                  -0.084      -0.047      +0.070           --     -0.010      -0.111      -0.125      -0.079 
+  HybridVulDetect            -0.074      -0.037      +0.080      +0.010           --     -0.101      -0.115      -0.069 
+  CodeBERT                   +0.026      +0.064      +0.181*     +0.111      +0.101           --     -0.014      +0.032 
+  SmartBERT                  +0.041      +0.078      +0.195*     +0.125      +0.115      +0.014           --     +0.046 
+  GNN (Contract-GCN)         -0.006      +0.032      +0.149*     +0.079      +0.069      -0.032      -0.046           --
   -- Holm-adjusted p
                           XGBoost (f  SmartEmbed  ETH2Vec (D   DeepSolid  HybridVulD    CodeBERT   SmartBERT  GNN (Contr
-  XGBoost (fused)                 --       0.960       0.010       0.133       0.158       0.385       1.000       1.000
-  SmartEmbed (W2V+RF)          0.960          --       0.053       0.974       1.000       1.000       1.000       0.526
-  ETH2Vec (D2V+SVM)            0.010       0.053          --       1.000       1.000       1.000       0.878       0.003
-  DeepSolid                    0.133       0.974       1.000          --       0.593       1.000       0.134       0.195
-  HybridVulDetect              0.158       1.000       1.000       0.593          --       1.000       0.507       0.320
-  CodeBERT                     0.385       1.000       1.000       1.000       1.000          --       0.320       0.547
-  SmartBERT                    1.000       1.000       0.878       0.134       0.507       0.320          --       1.000
-  GNN (Contract-GCN)           1.000       0.526       0.003       0.195       0.320       0.547       1.000          --
+  XGBoost (fused)                 --       1.000      <0.001       0.776       0.743       1.000       1.000       1.000
+  SmartEmbed (W2V+RF)          1.000          --      <0.001       1.000       1.000       0.191       0.073       1.000
+  ETH2Vec (D2V+SVM)           <0.001      <0.001          --       1.000       0.833      <0.001      <0.001      <0.001
+  DeepSolid                    0.776       1.000       1.000          --       1.000       0.346       0.178       1.000
+  HybridVulDetect              0.743       1.000       0.833       1.000          --       0.285       0.129       1.000
+  CodeBERT                     1.000       0.191      <0.001       0.346       0.285          --       1.000       1.000
+  SmartBERT                    1.000       0.073      <0.001       0.178       0.129       1.000          --       0.711
+  GNN (Contract-GCN)           1.000       1.000      <0.001       1.000       1.000       1.000       0.711          --
   (* = Holm-adjusted p < 0.05)
 
 ====================================================================================================
@@ -40,135 +40,134 @@
   [95% CI: clone-group bootstrap stratified by source]   gap = real-world - SolidiFI
 ====================================================================================================
   Model                                    all              solidifi             realworld             smartbugs                   cgt                     gap
-  XGBoost (fused)          0.846 [0.812,0.877]   0.939 [0.907,0.968]   0.615 [0.518,0.691]   0.696 [0.588,0.794]   0.332 [0.250,0.420]  -0.325 [-0.425,-0.243]
-  SmartEmbed (W2V+RF)      0.805 [0.758,0.845]   0.946 [0.900,0.979]   0.387 [0.317,0.447]   0.344 [0.265,0.413]   0.314 [0.240,0.436]  -0.559 [-0.638,-0.486]
-  ETH2Vec (D2V+SVM)        0.690 [0.616,0.755]   0.850 [0.762,0.920]   0.256 [0.198,0.307]   0.252 [0.181,0.312]   0.185 [0.133,0.262]  -0.594 [-0.690,-0.492]
-  DeepSolid                0.679 [0.603,0.751]   0.675 [0.555,0.790]   0.597 [0.491,0.676]   0.676 [0.533,0.769]   0.309 [0.240,0.384]  -0.078 [-0.235,+0.058]
-  HybridVulDetect          0.718 [0.654,0.778]   0.749 [0.652,0.842]   0.587 [0.485,0.661]   0.665 [0.534,0.755]   0.301 [0.233,0.376]  -0.163 [-0.298,-0.045]
-  CodeBERT                 0.706 [0.618,0.783]   0.772 [0.643,0.890]   0.509 [0.438,0.560]   0.530 [0.448,0.588]   0.273 [0.214,0.343]  -0.263 [-0.407,-0.128]
-  SmartBERT                0.800 [0.715,0.872]   0.841 [0.715,0.945]   0.705 [0.621,0.759]   0.808 [0.719,0.878]   0.325 [0.254,0.416]  -0.136 [-0.272,-0.002]
-  GNN (Contract-GCN)       0.855 [0.822,0.884]   0.991 [0.978,1.000]   0.533 [0.443,0.605]   0.566 [0.449,0.647]   0.342 [0.267,0.418]  -0.458 [-0.550,-0.387]
-  contracts: all=595, solidifi=350, realworld=245, smartbugs=125, cgt=120
-  SD over repeats: XGBoost (fused) RW 0.034; SmartEmbed (W2V+RF) RW 0.029; ETH2Vec (D2V+SVM) RW 0.021; DeepSolid RW 0.029; HybridVulDetect RW 0.024; CodeBERT RW 0.097; SmartBERT RW 0.046; GNN (Contract-GCN) RW 0.024
+  XGBoost (fused)          0.844 [0.807,0.878]   0.979 [0.958,0.994]   0.533 [0.429,0.621]   0.550 [0.422,0.632]   0.337 [0.254,0.416]  -0.446 [-0.551,-0.357]
+  SmartEmbed (W2V+RF)      0.810 [0.764,0.848]   0.947 [0.903,0.980]   0.394 [0.321,0.456]   0.352 [0.270,0.422]   0.311 [0.239,0.441]  -0.553 [-0.637,-0.478]
+  ETH2Vec (D2V+SVM)        0.694 [0.619,0.758]   0.853 [0.766,0.923]   0.261 [0.201,0.310]   0.284 [0.202,0.345]   0.179 [0.135,0.246]  -0.592 [-0.687,-0.494]
+  DeepSolid                0.762 [0.722,0.798]   0.906 [0.876,0.931]   0.465 [0.378,0.538]   0.500 [0.382,0.581]   0.309 [0.233,0.379]  -0.442 [-0.533,-0.363]
+  HybridVulDetect          0.771 [0.732,0.806]   0.922 [0.895,0.943]   0.465 [0.379,0.536]   0.497 [0.383,0.576]   0.303 [0.228,0.375]  -0.457 [-0.547,-0.381]
+  CodeBERT                 0.870 [0.839,0.896]   1.000 [1.000,1.000]   0.572 [0.475,0.647]   0.625 [0.503,0.708]   0.333 [0.261,0.421]  -0.428 [-0.525,-0.353]
+  SmartBERT                0.884 [0.854,0.910]   1.000 [1.000,1.000]   0.621 [0.518,0.701]   0.669 [0.532,0.766]   0.425 [0.332,0.540]  -0.379 [-0.482,-0.299]
+  GNN (Contract-GCN)       0.842 [0.807,0.872]   0.988 [0.967,0.999]   0.490 [0.407,0.559]   0.493 [0.392,0.567]   0.345 [0.267,0.426]  -0.497 [-0.583,-0.425]
+  contracts: all=593, solidifi=350, realworld=243, smartbugs=123, cgt=120
+  SD over repeats: XGBoost (fused) RW 0.024; SmartEmbed (W2V+RF) RW 0.034; ETH2Vec (D2V+SVM) RW 0.017; DeepSolid RW 0.025; HybridVulDetect RW 0.020; CodeBERT RW 0.033; SmartBERT RW 0.032; GNN (Contract-GCN) RW 0.020
 
   Paired bootstrap on realworld macro-F1, significant pairs (Holm p < 0.05):
-    ETH2Vec (D2V+SVM) - SmartBERT = -0.449  [-0.524,-0.359]  p_holm=<0.001
-    XGBoost (fused) - ETH2Vec (D2V+SVM) = +0.359  [+0.257,+0.453]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - DeepSolid = -0.342  [-0.436,-0.234]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - HybridVulDetect = -0.331  [-0.421,-0.226]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - SmartBERT = -0.318  [-0.390,-0.235]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.277  [-0.357,-0.189]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - CodeBERT = -0.254  [-0.324,-0.170]  p_holm=<0.001
-    XGBoost (fused) - SmartEmbed (W2V+RF) = +0.228  [+0.133,+0.316]  p_holm=0.006
-    SmartEmbed (W2V+RF) - DeepSolid = -0.210  [-0.294,-0.108]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - HybridVulDetect = -0.199  [-0.283,-0.103]  p_holm=<0.001
-    CodeBERT - SmartBERT = -0.195  [-0.241,-0.152]  p_holm=<0.001
-    SmartBERT - GNN (Contract-GCN) = +0.172  [+0.104,+0.242]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - GNN (Contract-GCN) = -0.146  [-0.218,-0.067]  p_holm=0.006
-    SmartEmbed (W2V+RF) - ETH2Vec (D2V+SVM) = +0.131  [+0.071,+0.192]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - CodeBERT = -0.122  [-0.187,-0.053]  p_holm=0.018
-    HybridVulDetect - SmartBERT = -0.118  [-0.192,-0.053]  p_holm=0.006
-    DeepSolid - SmartBERT = -0.108  [-0.182,-0.040]  p_holm=0.014
-    XGBoost (fused) - CodeBERT = +0.105  [+0.051,+0.167]  p_holm=<0.001
-    XGBoost (fused) - SmartBERT = -0.090  [-0.146,-0.034]  p_holm=0.018
+    ETH2Vec (D2V+SVM) - SmartBERT = -0.360  [-0.449,-0.260]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - CodeBERT = -0.311  [-0.398,-0.214]  p_holm=<0.001
+    XGBoost (fused) - ETH2Vec (D2V+SVM) = +0.272  [+0.164,+0.373]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.229  [-0.304,-0.150]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - SmartBERT = -0.227  [-0.307,-0.134]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - DeepSolid = -0.203  [-0.291,-0.112]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - HybridVulDetect = -0.203  [-0.289,-0.113]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - CodeBERT = -0.178  [-0.254,-0.094]  p_holm=0.006
+    HybridVulDetect - SmartBERT = -0.156  [-0.209,-0.106]  p_holm=<0.001
+    DeepSolid - SmartBERT = -0.156  [-0.210,-0.104]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - ETH2Vec (D2V+SVM) = +0.133  [+0.072,+0.196]  p_holm=<0.001
+    SmartBERT - GNN (Contract-GCN) = +0.131  [+0.070,+0.194]  p_holm=<0.001
+    HybridVulDetect - CodeBERT = -0.108  [-0.155,-0.060]  p_holm=<0.001
+    DeepSolid - CodeBERT = -0.108  [-0.155,-0.060]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - GNN (Contract-GCN) = -0.096  [-0.157,-0.035]  p_holm=0.047
+    CodeBERT - SmartBERT = -0.048  [-0.077,-0.023]  p_holm=<0.001
 
   Paired bootstrap on smartbugs macro-F1, significant pairs (Holm p < 0.05):
-    ETH2Vec (D2V+SVM) - SmartBERT = -0.556  [-0.652,-0.448]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - SmartBERT = -0.464  [-0.568,-0.352]  p_holm=<0.001
-    XGBoost (fused) - ETH2Vec (D2V+SVM) = +0.444  [+0.323,+0.564]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - DeepSolid = -0.424  [-0.532,-0.277]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - HybridVulDetect = -0.413  [-0.520,-0.273]  p_holm=<0.001
-    XGBoost (fused) - SmartEmbed (W2V+RF) = +0.352  [+0.235,+0.471]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - DeepSolid = -0.332  [-0.436,-0.193]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - HybridVulDetect = -0.321  [-0.424,-0.189]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.313  [-0.400,-0.200]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - CodeBERT = -0.278  [-0.366,-0.181]  p_holm=<0.001
-    CodeBERT - SmartBERT = -0.278  [-0.347,-0.216]  p_holm=<0.001
-    SmartBERT - GNN (Contract-GCN) = +0.243  [+0.150,+0.346]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - GNN (Contract-GCN) = -0.222  [-0.310,-0.111]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - CodeBERT = -0.187  [-0.263,-0.097]  p_holm=0.013
-    XGBoost (fused) - CodeBERT = +0.166  [+0.097,+0.253]  p_holm=<0.001
-    HybridVulDetect - SmartBERT = -0.143  [-0.253,-0.063]  p_holm=0.005
-    DeepSolid - SmartBERT = -0.132  [-0.250,-0.055]  p_holm=<0.001
-    XGBoost (fused) - SmartBERT = -0.112  [-0.189,-0.047]  p_holm=0.013
-    SmartEmbed (W2V+RF) - ETH2Vec (D2V+SVM) = +0.092  [+0.034,+0.150]  p_holm=0.010
+    ETH2Vec (D2V+SVM) - SmartBERT = -0.386  [-0.496,-0.251]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - CodeBERT = -0.342  [-0.445,-0.213]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - SmartBERT = -0.318  [-0.420,-0.190]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - CodeBERT = -0.274  [-0.367,-0.154]  p_holm=<0.001
+    XGBoost (fused) - ETH2Vec (D2V+SVM) = +0.266  [+0.134,+0.370]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - DeepSolid = -0.216  [-0.322,-0.089]  p_holm=0.019
+    ETH2Vec (D2V+SVM) - HybridVulDetect = -0.213  [-0.318,-0.088]  p_holm=0.019
+    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.210  [-0.288,-0.117]  p_holm=<0.001
+    XGBoost (fused) - SmartEmbed (W2V+RF) = +0.198  [+0.075,+0.289]  p_holm=0.028
+    SmartBERT - GNN (Contract-GCN) = +0.176  [+0.094,+0.259]  p_holm=<0.001
+    HybridVulDetect - SmartBERT = -0.172  [-0.255,-0.098]  p_holm=<0.001
+    DeepSolid - SmartBERT = -0.169  [-0.249,-0.099]  p_holm=<0.001
+    CodeBERT - GNN (Contract-GCN) = +0.132  [+0.051,+0.218]  p_holm=0.014
+    HybridVulDetect - CodeBERT = -0.128  [-0.198,-0.065]  p_holm=<0.001
+    DeepSolid - CodeBERT = -0.125  [-0.193,-0.064]  p_holm=<0.001
 
   Paired bootstrap on cgt macro-F1, significant pairs (Holm p < 0.05):
-    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.157  [-0.242,-0.057]  p_holm=0.022
-    ETH2Vec (D2V+SVM) - SmartBERT = -0.141  [-0.231,-0.052]  p_holm=0.011
+    ETH2Vec (D2V+SVM) - SmartBERT = -0.246  [-0.335,-0.152]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.167  [-0.250,-0.067]  p_holm=<0.001
+    XGBoost (fused) - ETH2Vec (D2V+SVM) = +0.159  [+0.054,+0.242]  p_holm=0.018
+    ETH2Vec (D2V+SVM) - CodeBERT = -0.155  [-0.241,-0.062]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - ETH2Vec (D2V+SVM) = +0.132  [+0.049,+0.252]  p_holm=0.026
+    HybridVulDetect - SmartBERT = -0.122  [-0.209,-0.053]  p_holm=<0.001
+    DeepSolid - SmartBERT = -0.115  [-0.207,-0.045]  p_holm=<0.001
 
   Paired bootstrap on solidifi macro-F1, significant pairs (Holm p < 0.05):
-    DeepSolid - GNN (Contract-GCN) = -0.316  [-0.436,-0.199]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - DeepSolid = +0.271  [+0.151,+0.394]  p_holm=<0.001
-    XGBoost (fused) - DeepSolid = +0.264  [+0.160,+0.373]  p_holm=<0.001
-    HybridVulDetect - GNN (Contract-GCN) = -0.242  [-0.340,-0.147]  p_holm=<0.001
-    CodeBERT - GNN (Contract-GCN) = -0.219  [-0.349,-0.100]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - HybridVulDetect = +0.196  [+0.099,+0.297]  p_holm=<0.001
-    XGBoost (fused) - HybridVulDetect = +0.190  [+0.112,+0.272]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - CodeBERT = +0.173  [+0.056,+0.303]  p_holm=0.006
-    XGBoost (fused) - CodeBERT = +0.167  [+0.061,+0.277]  p_holm=0.010
-    DeepSolid - SmartBERT = -0.166  [-0.270,-0.077]  p_holm=<0.001
-    SmartBERT - GNN (Contract-GCN) = -0.150  [-0.278,-0.044]  p_holm=<0.001
-    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.141  [-0.224,-0.074]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - ETH2Vec (D2V+SVM) = +0.096  [+0.034,+0.172]  p_holm=<0.001
-    DeepSolid - HybridVulDetect = -0.074  [-0.107,-0.042]  p_holm=<0.001
-    CodeBERT - SmartBERT = -0.068  [-0.103,-0.036]  p_holm=<0.001
-    XGBoost (fused) - GNN (Contract-GCN) = -0.052  [-0.085,-0.021]  p_holm=<0.001
-    SmartEmbed (W2V+RF) - GNN (Contract-GCN) = -0.045  [-0.084,-0.016]  p_holm=0.006
+    ETH2Vec (D2V+SVM) - CodeBERT = -0.147  [-0.234,-0.077]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - SmartBERT = -0.147  [-0.234,-0.077]  p_holm=<0.001
+    ETH2Vec (D2V+SVM) - GNN (Contract-GCN) = -0.134  [-0.218,-0.068]  p_holm=<0.001
+    XGBoost (fused) - ETH2Vec (D2V+SVM) = +0.126  [+0.063,+0.205]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - ETH2Vec (D2V+SVM) = +0.094  [+0.034,+0.168]  p_holm=<0.001
+    DeepSolid - CodeBERT = -0.094  [-0.124,-0.069]  p_holm=<0.001
+    DeepSolid - SmartBERT = -0.094  [-0.124,-0.069]  p_holm=<0.001
+    DeepSolid - GNN (Contract-GCN) = -0.081  [-0.103,-0.063]  p_holm=<0.001
+    HybridVulDetect - CodeBERT = -0.078  [-0.105,-0.057]  p_holm=<0.001
+    HybridVulDetect - SmartBERT = -0.078  [-0.105,-0.057]  p_holm=<0.001
+    XGBoost (fused) - DeepSolid = +0.073  [+0.056,+0.092]  p_holm=<0.001
+    HybridVulDetect - GNN (Contract-GCN) = -0.066  [-0.084,-0.051]  p_holm=<0.001
+    XGBoost (fused) - HybridVulDetect = +0.057  [+0.043,+0.073]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - CodeBERT = -0.053  [-0.097,-0.020]  p_holm=<0.001
+    SmartEmbed (W2V+RF) - SmartBERT = -0.053  [-0.097,-0.020]  p_holm=<0.001
+    XGBoost (fused) - CodeBERT = -0.021  [-0.042,-0.006]  p_holm=<0.001
+    XGBoost (fused) - SmartBERT = -0.021  [-0.042,-0.006]  p_holm=<0.001
+    DeepSolid - HybridVulDetect = -0.015  [-0.023,-0.008]  p_holm=<0.001
 
 ====================================================================================================
   PER-CLASS F1 (all contracts; out-of-fold pooled per repeat, mean over repeats)
 ====================================================================================================
   Model                   access_contr    arithmetic  front_runnin    reentrancy  time_manipul  unchecked_lo
-  XGBoost (fused)                0.845         0.853         0.781         0.858         0.950         0.789
-  SmartEmbed (W2V+RF)            0.804         0.743         0.814         0.779         0.904         0.785
-  ETH2Vec (D2V+SVM)              0.669         0.641         0.707         0.661         0.830         0.634
-  DeepSolid                      0.619         0.709         0.540         0.641         0.900         0.666
-  HybridVulDetect                0.730         0.764         0.589         0.675         0.882         0.666
-  CodeBERT                       0.689         0.713         0.652         0.720         0.751         0.708
-  SmartBERT                      0.849         0.813         0.699         0.809         0.843         0.786
-  GNN (Contract-GCN)             0.829         0.830         0.828         0.857         0.916         0.869
+  XGBoost (fused)                0.819         0.818         0.827         0.870         0.933         0.798
+  SmartEmbed (W2V+RF)            0.808         0.746         0.828         0.784         0.903         0.790
+  ETH2Vec (D2V+SVM)              0.649         0.666         0.707         0.663         0.832         0.646
+  DeepSolid                      0.690         0.811         0.725         0.816         0.910         0.618
+  HybridVulDetect                0.710         0.810         0.731         0.810         0.915         0.653
+  CodeBERT                       0.874         0.832         0.804         0.899         0.948         0.862
+  SmartBERT                      0.884         0.861         0.836         0.895         0.953         0.873
+  GNN (Contract-GCN)             0.803         0.820         0.845         0.853         0.907         0.824
 
 ====================================================================================================
-  MATCHED SUBSET: only the 496 contracts that compile to EVM bytecode (SolidiFI 302, real-world 194)
+  MATCHED SUBSET: only the 494 contracts that compile to EVM bytecode (SolidiFI 302, real-world 192)
 ====================================================================================================
   Model                           fold macro-F1 [corr. CI]     real-world pooled [boot CI]      ETH2Vec - model (Holm p)
-  XGBoost (fused)       0.845 [0.773,0.918]             0.624 [0.528,0.703]                -0.098 (0.448)
-  SmartEmbed (W2V+RF)   0.801 [0.710,0.892]             0.375 [0.314,0.423]                -0.053 (0.823)
-  ETH2Vec (D2V+SVM)     0.748 [0.628,0.868]             0.302 [0.238,0.358]                            --
-  DeepSolid             0.669 [0.569,0.770]             0.592 [0.479,0.675]                +0.079 (1.000)
-  HybridVulDetect       0.710 [0.628,0.791]             0.591 [0.483,0.670]                +0.038 (1.000)
-  CodeBERT              0.696 [0.582,0.810]             0.488 [0.415,0.536]                +0.052 (1.000)
-  SmartBERT             0.798 [0.697,0.898]             0.699 [0.612,0.760]                -0.050 (1.000)
-  GNN (Contract-GCN)    0.858 [0.789,0.928]             0.527 [0.439,0.595]                -0.110 (0.127)
+  XGBoost (fused)       0.852 [0.797,0.907]             0.516 [0.418,0.600]                -0.080 (0.230)
+  SmartEmbed (W2V+RF)   0.817 [0.751,0.883]             0.382 [0.316,0.431]                -0.046 (0.713)
+  ETH2Vec (D2V+SVM)     0.771 [0.699,0.843]             0.310 [0.246,0.361]                            --
+  DeepSolid             0.762 [0.661,0.864]             0.462 [0.373,0.536]                +0.009 (1.000)
+  HybridVulDetect       0.773 [0.682,0.864]             0.463 [0.376,0.534]                -0.002 (1.000)
+  CodeBERT              0.878 [0.814,0.942]             0.583 [0.487,0.652]                -0.107 (0.004)
+  SmartBERT             0.894 [0.833,0.955]             0.630 [0.526,0.706]               -0.123 (<0.001)
+  GNN (Contract-GCN)    0.844 [0.771,0.917]             0.473 [0.398,0.531]                -0.073 (0.165)
 
 ====================================================================================================
   MODEL-SEED STUDY (fold split fixed at seed 42, only the training seed varies)
 ====================================================================================================
-  DeepSolid              seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0119 range [0.677,0.709]   real-world SD 0.0114 range [0.590,0.618]
-  HybridVulDetect        seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0069 range [0.713,0.728]   real-world SD 0.0155 range [0.575,0.614]
-  CodeBERT               seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0209 range [0.690,0.742]   real-world SD 0.0407 range [0.453,0.553]
-  SmartBERT              seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0043 range [0.807,0.817]   real-world SD 0.0089 range [0.696,0.719]
-  GNN (Contract-GCN)     seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0082 range [0.817,0.836]   real-world SD 0.0240 range [0.509,0.570]
+  DeepSolid              seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0539 range [0.675,0.811]   real-world SD 0.0436 range [0.406,0.518]
+  HybridVulDetect        seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0397 range [0.729,0.819]   real-world SD 0.0332 range [0.436,0.526]
+  CodeBERT               seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0058 range [0.856,0.871]   real-world SD 0.0246 range [0.576,0.634]
+  SmartBERT              seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0070 range [0.856,0.874]   real-world SD 0.0245 range [0.588,0.649]
+  GNN (Contract-GCN)     seeds [42, 43, 44, 45, 46]  CV macro-F1 SD 0.0123 range [0.811,0.840]   real-world SD 0.0226 range [0.460,0.513]
 
 ====================================================================================================
   LEAVE-ONE-SOURCE-OUT macro-F1: mean over seeds +/- SD [min,max] {bootstrap 95% CI}
 ====================================================================================================
   realworld_to_solidifi
-    XGBoost (fused)        n_seeds=5  solidifi: 0.264+/-0.029 [0.230,0.305] {0.200,0.317}
-    SmartEmbed (W2V+RF)    n_seeds=5  solidifi: 0.143+/-0.015 [0.124,0.159] {0.113,0.172}
-    ETH2Vec (D2V+SVM)      n_seeds=5  solidifi: 0.094+/-0.008 [0.085,0.102] {0.080,0.105}
-    DeepSolid              n_seeds=5  solidifi: 0.328+/-0.013 [0.311,0.342] {0.243,0.410}
-    HybridVulDetect        n_seeds=5  solidifi: 0.328+/-0.029 [0.280,0.356] {0.246,0.407}
-    CodeBERT               n_seeds=5  solidifi: 0.148+/-0.040 [0.103,0.190] {0.126,0.166}
-    SmartBERT              n_seeds=5  solidifi: 0.210+/-0.049 [0.145,0.272] {0.174,0.240}
-    GNN (Contract-GCN)     n_seeds=5  solidifi: 0.799+/-0.083 [0.707,0.913] {0.761,0.835}
+    XGBoost (fused)        n_seeds=5  solidifi: 0.209+/-0.018 [0.180,0.227] {0.176,0.238}
+    SmartEmbed (W2V+RF)    n_seeds=5  solidifi: 0.124+/-0.018 [0.093,0.141] {0.098,0.148}
+    ETH2Vec (D2V+SVM)      n_seeds=5  solidifi: 0.109+/-0.017 [0.096,0.134] {0.097,0.119}
+    DeepSolid              n_seeds=5  solidifi: 0.268+/-0.082 [0.157,0.357] {0.250,0.286}
+    HybridVulDetect        n_seeds=5  solidifi: 0.270+/-0.090 [0.121,0.344] {0.249,0.289}
+    CodeBERT               n_seeds=5  solidifi: 0.218+/-0.078 [0.153,0.342] {0.203,0.233}
+    SmartBERT              n_seeds=5  solidifi: 0.195+/-0.037 [0.158,0.256] {0.170,0.219}
+    GNN (Contract-GCN)     n_seeds=5  solidifi: 0.354+/-0.153 [0.188,0.535] {0.333,0.373}
   solidifi_to_realworld
-    XGBoost (fused)        n_seeds=5  realworld: 0.257+/-0.023 [0.226,0.289] {0.175,0.335}   smartbugs: 0.402+/-0.027 [0.375,0.441] {0.295,0.517}   cgt: 0.062+/-0.007 [0.052,0.071] {0.036,0.091}
-    SmartEmbed (W2V+RF)    n_seeds=5  realworld: 0.184+/-0.040 [0.122,0.222] {0.140,0.226}   smartbugs: 0.221+/-0.032 [0.166,0.243] {0.150,0.285}   cgt: 0.112+/-0.029 [0.064,0.137] {0.083,0.140}
-    ETH2Vec (D2V+SVM)      n_seeds=5  realworld: 0.108+/-0.023 [0.079,0.140] {0.079,0.133}   smartbugs: 0.133+/-0.029 [0.100,0.170] {0.097,0.163}   cgt: 0.057+/-0.007 [0.051,0.065] {0.035,0.081}
-    DeepSolid              n_seeds=5  realworld: 0.291+/-0.009 [0.281,0.306] {0.213,0.361}   smartbugs: 0.465+/-0.028 [0.429,0.499] {0.326,0.560}   cgt: 0.119+/-0.026 [0.086,0.146] {0.077,0.162}
-    HybridVulDetect        n_seeds=5  realworld: 0.299+/-0.028 [0.268,0.337] {0.226,0.368}   smartbugs: 0.447+/-0.049 [0.402,0.518] {0.329,0.547}   cgt: 0.128+/-0.035 [0.087,0.180] {0.084,0.173}
-    CodeBERT               n_seeds=5  realworld: 0.187+/-0.050 [0.125,0.252] {0.145,0.228}   smartbugs: 0.303+/-0.079 [0.215,0.407] {0.233,0.362}   cgt: 0.086+/-0.038 [0.049,0.149] {0.058,0.111}
-    SmartBERT              n_seeds=5  realworld: 0.146+/-0.032 [0.096,0.182] {0.106,0.185}   smartbugs: 0.249+/-0.091 [0.127,0.345] {0.173,0.310}   cgt: 0.052+/-0.019 [0.033,0.082] {0.031,0.073}
-    GNN (Contract-GCN)     n_seeds=5  realworld: 0.289+/-0.023 [0.271,0.328] {0.223,0.347}   smartbugs: 0.465+/-0.023 [0.436,0.492] {0.340,0.570}   cgt: 0.153+/-0.043 [0.112,0.224] {0.100,0.196}
+    XGBoost (fused)        n_seeds=5  realworld: 0.287+/-0.013 [0.271,0.306] {0.203,0.360}   smartbugs: 0.375+/-0.020 [0.348,0.400] {0.255,0.439}   cgt: 0.162+/-0.022 [0.134,0.187] {0.112,0.210}
+    SmartEmbed (W2V+RF)    n_seeds=5  realworld: 0.184+/-0.040 [0.121,0.222] {0.140,0.226}   smartbugs: 0.221+/-0.032 [0.166,0.243] {0.148,0.285}   cgt: 0.112+/-0.029 [0.064,0.137] {0.083,0.140}
+    ETH2Vec (D2V+SVM)      n_seeds=5  realworld: 0.111+/-0.021 [0.090,0.140] {0.078,0.139}   smartbugs: 0.146+/-0.032 [0.109,0.187] {0.103,0.179}   cgt: 0.050+/-0.003 [0.047,0.056] {0.030,0.073}
+    DeepSolid              n_seeds=5  realworld: 0.297+/-0.006 [0.289,0.305] {0.227,0.368}   smartbugs: 0.306+/-0.016 [0.292,0.334] {0.211,0.418}   cgt: 0.241+/-0.004 [0.237,0.246] {0.164,0.317}
+    HybridVulDetect        n_seeds=5  realworld: 0.303+/-0.011 [0.291,0.317] {0.234,0.374}   smartbugs: 0.328+/-0.022 [0.297,0.352] {0.236,0.446}   cgt: 0.241+/-0.008 [0.233,0.250] {0.166,0.316}
+    CodeBERT               n_seeds=5  realworld: 0.233+/-0.023 [0.215,0.272] {0.179,0.290}   smartbugs: 0.353+/-0.076 [0.258,0.422] {0.269,0.434}   cgt: 0.100+/-0.046 [0.059,0.178] {0.070,0.127}
+    SmartBERT              n_seeds=5  realworld: 0.288+/-0.035 [0.240,0.325] {0.214,0.354}   smartbugs: 0.485+/-0.017 [0.459,0.501] {0.339,0.586}   cgt: 0.120+/-0.045 [0.059,0.166] {0.070,0.164}
+    GNN (Contract-GCN)     n_seeds=5  realworld: 0.171+/-0.035 [0.128,0.213] {0.125,0.217}   smartbugs: 0.252+/-0.059 [0.186,0.319] {0.172,0.325}   cgt: 0.089+/-0.026 [0.063,0.124] {0.057,0.123}

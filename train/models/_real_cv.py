@@ -15,8 +15,7 @@ from typing import Callable, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-import train.evaluate as _ev
-from train.evaluate import aggregate_folds, compute_metrics
+from train.evaluate import compute_metrics, get_sample_weights, run_folds
 
 
 def run_real_cv(
@@ -25,14 +24,14 @@ def run_real_cv(
     labels: Sequence[int],
     source_datasets: Sequence[str],
     splits: List[Tuple[np.ndarray, np.ndarray]],
-    fit_predict_fn: Callable[[List[str], List[int], List[str], List[str]], Sequence[int]],
+    fit_predict_fn: Callable[..., Sequence[int]],
     eligible_mask: Optional[Sequence[bool]] = None,
     persist: bool = True,
 ) -> dict:
     """
     Parameters
     ----------
-    fit_predict_fn(train_texts, y_train, train_sources, test_texts) -> y_pred
+    fit_predict_fn(train_texts, y_train, train_sources, test_texts, sample_weights) -> y_pred
         Trains a fresh model on the fold's training data and returns predictions
         for ``test_texts`` (same order/length).
     eligible_mask
@@ -55,8 +54,7 @@ def run_real_cv(
         print(f"  Eligible contracts: {int(eligible_mask.sum())}/{len(texts)} "
               f"(the rest are excluded from training and get a fallback prediction when tested)")
 
-    fold_results: List[dict] = []
-    for fold_idx, (tr_idx, te_idx) in enumerate(splits, start=1):
+    def fold_fn(fold_idx, tr_idx, te_idx):
         tr_idx = np.asarray([int(i) for i in tr_idx if eligible_mask[i]], dtype=int)
         te_idx = np.asarray([int(i) for i in te_idx], dtype=int)
         te_ok = eligible_mask[te_idx]
@@ -67,35 +65,29 @@ def run_real_cv(
         y_te = y_arr[te_idx].tolist()
         tr_src = src_arr[tr_idx].tolist()
         te_src = src_arr[te_idx].tolist()
+        sw = get_sample_weights(y_tr, tr_src, tr_idx)
 
         print(f"\n  Fold {fold_idx}/{len(splits)}  "
               f"(train={len(tr_idx)}, test={len(te_idx)}) ...", flush=True)
 
         t0 = time.time()
-        pred_ok = list(fit_predict_fn(tr_texts, y_tr, tr_src, te_texts))
+        pred_ok = list(fit_predict_fn(tr_texts, y_tr, tr_src, te_texts, sw))
         dt = time.time() - t0
 
         assert len(pred_ok) == int(te_ok.sum()), (len(pred_ok), int(te_ok.sum()))
         fallback = int(np.bincount(np.asarray(y_tr), minlength=1).argmax())
         y_pred = np.full(len(te_idx), fallback, dtype=int)
         y_pred[te_ok] = pred_ok
-        y_pred = y_pred.tolist()
-        metrics = compute_metrics(y_te, y_pred, np.asarray(te_src, dtype=object))
+        metrics = compute_metrics(y_te, y_pred.tolist(), np.asarray(te_src, dtype=object), idx=te_idx)
         metrics.update(
-            fold=fold_idx,
             train_time_s=round(dt, 2),
             n_train=int(len(tr_idx)),
             n_test=int(len(te_idx)),
             test_idx=te_idx.tolist(),
             test_eligible=te_ok.tolist(),
         )
-        fold_results.append(metrics)
         print(f"    macro-F1={metrics['macro_f1']:.4f}  acc={metrics['accuracy']:.4f}  "
-              f"mcc={metrics['mcc']:.4f}  ({dt:.1f}s)")
+              f"mcc={metrics['mcc']:.4f}  ({dt:.1f}s)", flush=True)
+        return metrics
 
-    agg = aggregate_folds(fold_results)
-    if persist:
-        out = _ev.save_results(model_name, fold_results, agg)
-        print(f"\n  [OK] {model_name}: macro-F1 = "
-              f"{agg['macro_f1_mean']:.4f} +/- {agg['macro_f1_std']:.4f}   -> {out}")
-    return {"model": model_name, "folds": fold_results, "aggregate": agg}
+    return run_folds(model_name, splits, fold_fn, persist=persist)

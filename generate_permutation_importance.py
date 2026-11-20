@@ -35,7 +35,7 @@ from sklearn.inspection import permutation_importance
 from sklearn.metrics import f1_score
 
 from train.data_loader import load_records
-from train.evaluate import get_cv_splits, get_class_weights
+from train.evaluate import get_cv_splits, get_sample_weights
 from train.features.fused_features import fused_features, apply_gaussian_augmentation, STATIC_FEATURE_NAMES
 from train.config import RESULTS_DIR, RANDOM_SEED, NUM_LABELS, XGBOOST_PARAMS
 
@@ -94,10 +94,12 @@ def main():
     for k, (tr, te) in enumerate(splits, 1):
         # -- Train XGBoost exactly as in the benchmark (augmentation + class weights)
         print(f"[3/4] Fold {k}/{len(splits)}: training XGBoost on {len(tr)} contracts ...")
-        X_aug, y_aug = apply_gaussian_augmentation(X_all[tr], labels_arr[tr], NUM_LABELS, seed=RANDOM_SEED)
-        cw = get_class_weights(labels_arr[tr].tolist())
+        # same class- and source-balanced weights as the benchmark; noisy copies inherit them
+        sw = get_sample_weights(labels_arr[tr], np.asarray(source_datasets, dtype=object)[tr])
+        X_aug, y_aug, w_aug = apply_gaussian_augmentation(X_all[tr], labels_arr[tr], NUM_LABELS,
+                                                          seed=RANDOM_SEED, weights=sw)
         clf = xgb.XGBClassifier(**{k_: v for k_, v in XGBOOST_PARAMS.items() if k_ != "eval_metric"})
-        clf.fit(X_aug, y_aug, sample_weight=np.array([cw[y] for y in y_aug]))
+        clf.fit(X_aug, y_aug, sample_weight=w_aug)
 
         baselines.append(macro_f1_scorer(clf, X_all[te], labels_arr[te]))
         print(f"   Baseline macro-F1 on held-out fold: {baselines[-1]:.4f}")

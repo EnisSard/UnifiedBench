@@ -1,0 +1,13 @@
+SmartBERT masked-LM loss (nats/token, 15% masked, up to 6 chunks) and classification accuracy
+subset          n  median loss               IQR  share < 0.3
+solidifi      350        0.745       0.632-0.877         0.00
+smartbugs     123        1.021       0.786-1.552         0.09
+cgt           120        0.776       0.584-1.127         0.04
+
+Real-world contracts by SmartBERT loss quartile (Q1 = most familiar); accuracy mean over 10 repeats
+quartile      n        loss range  SmartBERT acc  CodeBERT acc  advantage
+Q1           61         0.12-0.65          0.710         0.677     +0.033
+Q2           60         0.65-0.90          0.628         0.612     +0.017
+Q3           61         0.91-1.28          0.702         0.664     +0.038
+Q4           61         1.29-5.69          0.770         0.711     +0.059
+Spearman(loss, SmartBERT-CodeBERT accuracy advantage) over real-world contracts: rho=+0.044, p=0.493

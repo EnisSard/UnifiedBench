@@ -39,6 +39,7 @@ import traceback
 
 from train.config import (
     N_REPEATS, REPEAT_SEED_BASE, RESULTS_DIR, set_seed, set_results_dir,
+    set_groups, StopRequested, STOP_FILE,
 )
 from train.data_loader import load_records
 from train.evaluate import get_cv_splits
@@ -67,7 +68,20 @@ def parse_args():
     return parser.parse_args()
 
 
+def _run_fn(model_name):
+    """run(texts, labels, sources, splits, persist=..., hp=...) of one model."""
+    if model_name in TRANSFORMER_MODELS:
+        return lambda *a, **k: transformer_model.run(model_name, *a, **k)
+    return {"xgboost": xgboost_model.run, "smartembed": smartembed_model.run,
+            "eth2vec": eth2vec_model.run, "deepsolid": deepsolid_model.run,
+            "hybridvuldetect": hybridvuldetect_model.run, "gnn": gnn_model.run}[model_name]
+
+
 def run_model(model_name, texts, labels, source_datasets, splits):
+    from train.config import PROFILE
+    if PROFILE["tune"]:
+        from train.tuning import run_tuned
+        return run_tuned(model_name, _run_fn(model_name), texts, labels, source_datasets, splits)
     if model_name == "xgboost":
         return xgboost_model.run(texts, labels, source_datasets, splits)
     if model_name == "smartembed":
@@ -107,6 +121,7 @@ def main():
     if args.file_level_solidifi_groups:
         group_ids = [f if s == "solidifi" else g for f, s, g in zip(filenames, source_datasets, group_ids)]
         print(f"  [ABLATION] SolidiFI files are singleton groups -> {len(set(group_ids))} groups")
+    set_groups(group_ids)
 
     t_total = time.time()
     failures = []
@@ -128,6 +143,10 @@ def main():
             try:
                 run_model(model_name, texts, labels, source_datasets, splits)
                 print(f"  [{model_name}] seed {seed}: done in {time.time() - t_model:.0f}s", flush=True)
+            except (StopRequested, KeyboardInterrupt) as e:
+                print(f"\n[STOPPED] {e or 'Ctrl+C'} -- finished folds are saved; "
+                      f"rerun the same command to resume. Delete {STOP_FILE} first.", flush=True)
+                raise SystemExit(3)
             except Exception as e:
                 failures.append((seed, model_name, str(e)))
                 print(f"\n  [ERROR] {model_name} (seed {seed}) failed: {e}")

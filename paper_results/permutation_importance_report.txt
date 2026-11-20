@@ -2,17 +2,17 @@
 -- Top-10 Permutation-Important Features ----------------------------
   Rank   Feature                                    Mean dF1       Std  Type
   ------------------------------------------------------------------------
-  1      block_timestamp                              0.1282    0.0431  static
-  2      require_statements                           0.0721    0.0260  static
-  3      transfer_calls                               0.0643    0.0315  static
-  4      unchecked_math                               0.0468    0.0236  static
-  5      send_calls                                   0.0329    0.0116  static
-  6      now_usage                                    0.0100    0.0102  static
-  7      function_count                               0.0088    0.0129  static
-  8      MiniLM_196                                   0.0040    0.0051  semantic
-  9      MiniLM_99                                    0.0034    0.0039  semantic
-  10     MiniLM_220                                   0.0032    0.0047  semantic
+  1      block_timestamp                              0.0740    0.0118  static
+  2      unchecked_math                               0.0141    0.0126  static
+  3      MiniLM_279                                   0.0100    0.0107  semantic
+  4      MiniLM_167                                   0.0088    0.0084  semantic
+  5      MiniLM_62                                    0.0075    0.0055  semantic
+  6      MiniLM_307                                   0.0074    0.0049  semantic
+  7      now_usage                                    0.0072    0.0065  static
+  8      MiniLM_43                                    0.0071    0.0105  semantic
+  9      MiniLM_237                                   0.0068    0.0035  semantic
+  10     MiniLM_61                                    0.0066    0.0051  semantic
 
-  Baseline macro-F1 (mean over held-out folds): 0.8192
+  Baseline macro-F1 (mean over held-out folds): 0.8417
   Interpretation: features with mean decrease > 0 are predictive;
   negative values indicate the feature adds noise.

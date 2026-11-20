@@ -1,9 +1,9 @@
 {
-  "total": 595,
-  "compiled": 496,
+  "total": 593,
+  "compiled": 494,
   "fallback": 99,
   "compiled_by_source": {
-    "realworld": 194,
+    "realworld": 192,
     "solidifi": 302
   }
 }

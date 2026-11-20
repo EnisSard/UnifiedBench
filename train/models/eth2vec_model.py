@@ -41,7 +41,8 @@ def _prep(texts):
     return stats
 
 
-def _fit_predict(train_texts, y_train, train_sources, test_texts):
+def _fit_predict(train_texts, y_train, train_sources, test_texts, sample_weights=None, hp=None):
+    hp = {**dict(C=1.0), **(hp or {})}
     tr_docs = [
         TaggedDocument(_SEQS[t], [i]) for i, t in enumerate(train_texts)
     ]
@@ -65,12 +66,12 @@ def _fit_predict(train_texts, y_train, train_sources, test_texts):
     X_tr = np.vstack([infer(t) for t in train_texts])
     X_te = np.vstack([infer(t) for t in test_texts])
 
-    clf = SVC(kernel="rbf", C=1.0, class_weight="balanced", random_state=get_seed())
-    clf.fit(X_tr, y_train)
+    clf = SVC(kernel="rbf", C=hp["C"], random_state=get_seed())  # balance via sample_weights
+    clf.fit(X_tr, y_train, sample_weight=sample_weights)
     return clf.predict(X_te).tolist()
 
 
-def run(texts, labels, source_datasets, splits, persist=True):
+def run(texts, labels, source_datasets, splits, persist=True, hp=None):
     warn_if_hashseed_unset()
     print("  [ETH2Vec] Doc2Vec PV-DM d=100 + RBF-SVM  (bytecode / opcode method)")
     _prep(list(texts))
@@ -95,5 +96,5 @@ def run(texts, labels, source_datasets, splits, persist=True):
 
     return run_real_cv(
         "eth2vec", texts, labels, source_datasets, splits,
-        fit_predict_fn=_fit_predict, eligible_mask=eligible, persist=persist,
+        fit_predict_fn=lambda *a, **k: _fit_predict(*a, **k, hp=hp), eligible_mask=eligible, persist=persist,
     )

@@ -1,8 +1,8 @@
 {
-  "total_contracts": 595,
+  "total_contracts": 593,
   "source_totals": {
     "solidifi": 350,
-    "smartbugs": 125,
+    "smartbugs": 123,
     "cgt": 120
   },
   "per_class_per_source": {
@@ -29,10 +29,10 @@
     },
     "reentrancy": {
       "solidifi": 50,
-      "smartbugs": 31,
+      "smartbugs": 30,
       "cgt": 17,
-      "realworld": 48,
-      "total": 98
+      "realworld": 47,
+      "total": 97
     },
     "time_manipulation": {
       "solidifi": 50,
@@ -43,10 +43,10 @@
     },
     "unchecked_low_level_calls": {
       "solidifi": 100,
-      "smartbugs": 52,
+      "smartbugs": 51,
       "cgt": 19,
-      "realworld": 71,
-      "total": 171
+      "realworld": 70,
+      "total": 170
     }
   },
   "groups": {
@@ -64,13 +64,15 @@
     "solidifi_base_contracts": 50
   },
   "realworld_candidates": 509,
-  "realworld_included": 245,
-  "realworld_excluded": 264,
+  "realworld_included": 243,
+  "realworld_excluded": 266,
   "exclusion_reasons": {
-    "Excluded (multi_label)": 261,
+    "Excluded (multi_label)": 263,
     "Excluded (exact_duplicate)": 3
   },
   "excluded_multilabel_label_sets": {
+    "reentrancy": 1,
+    "unchecked_low_level_calls": 1,
     "arithmetic+front_running+unchecked_low_level_calls": 123,
     "reentrancy+unchecked_low_level_calls": 5,
     "arithmetic+front_running": 26,
@@ -101,195 +103,195 @@
   "folds_seed_42": [
     {
       "fold": 1,
-      "n_train": 507,
-      "n_test": 88,
-      "test_solidifi": 35,
-      "test_realworld": 53,
+      "n_train": 452,
+      "n_test": 141,
+      "test_solidifi": 91,
+      "test_realworld": 50,
       "per_class": {
         "access_control": {
-          "total": 13,
-          "solidifi": 5,
-          "realworld": 8
+          "total": 19,
+          "solidifi": 13,
+          "realworld": 6
         },
         "arithmetic": {
-          "total": 19,
-          "solidifi": 5,
-          "realworld": 14
+          "total": 24,
+          "solidifi": 13,
+          "realworld": 11
         },
         "front_running": {
-          "total": 13,
-          "solidifi": 5,
-          "realworld": 8
+          "total": 16,
+          "solidifi": 13,
+          "realworld": 3
         },
         "reentrancy": {
-          "total": 19,
-          "solidifi": 5,
-          "realworld": 14
+          "total": 22,
+          "solidifi": 13,
+          "realworld": 9
         },
         "time_manipulation": {
-          "total": 7,
-          "solidifi": 5,
-          "realworld": 2
+          "total": 14,
+          "solidifi": 13,
+          "realworld": 1
         },
         "unchecked_low_level_calls": {
-          "total": 17,
-          "solidifi": 10,
-          "realworld": 7
+          "total": 46,
+          "solidifi": 26,
+          "realworld": 20
         }
       }
     },
     {
       "fold": 2,
-      "n_train": 480,
-      "n_test": 115,
-      "test_solidifi": 77,
-      "test_realworld": 38,
+      "n_train": 485,
+      "n_test": 108,
+      "test_solidifi": 56,
+      "test_realworld": 52,
       "per_class": {
         "access_control": {
-          "total": 13,
-          "solidifi": 11,
-          "realworld": 2
+          "total": 11,
+          "solidifi": 8,
+          "realworld": 3
         },
         "arithmetic": {
-          "total": 30,
-          "solidifi": 11,
-          "realworld": 19
+          "total": 28,
+          "solidifi": 8,
+          "realworld": 20
         },
         "front_running": {
-          "total": 14,
-          "solidifi": 11,
+          "total": 11,
+          "solidifi": 8,
           "realworld": 3
         },
         "reentrancy": {
-          "total": 15,
-          "solidifi": 11,
-          "realworld": 4
+          "total": 19,
+          "solidifi": 8,
+          "realworld": 11
         },
         "time_manipulation": {
-          "total": 11,
-          "solidifi": 11,
-          "realworld": 0
+          "total": 9,
+          "solidifi": 8,
+          "realworld": 1
         },
         "unchecked_low_level_calls": {
-          "total": 32,
-          "solidifi": 22,
-          "realworld": 10
+          "total": 30,
+          "solidifi": 16,
+          "realworld": 14
         }
       }
     },
     {
       "fold": 3,
-      "n_train": 454,
-      "n_test": 141,
-      "test_solidifi": 84,
-      "test_realworld": 57,
+      "n_train": 416,
+      "n_test": 177,
+      "test_solidifi": 119,
+      "test_realworld": 58,
       "per_class": {
         "access_control": {
-          "total": 17,
-          "solidifi": 12,
-          "realworld": 5
+          "total": 19,
+          "solidifi": 17,
+          "realworld": 2
         },
         "arithmetic": {
-          "total": 23,
-          "solidifi": 12,
-          "realworld": 11
+          "total": 34,
+          "solidifi": 17,
+          "realworld": 17
         },
         "front_running": {
-          "total": 17,
-          "solidifi": 12,
-          "realworld": 5
+          "total": 24,
+          "solidifi": 17,
+          "realworld": 7
         },
         "reentrancy": {
           "total": 29,
-          "solidifi": 12,
-          "realworld": 17
+          "solidifi": 17,
+          "realworld": 12
         },
         "time_manipulation": {
-          "total": 13,
-          "solidifi": 12,
-          "realworld": 1
+          "total": 17,
+          "solidifi": 17,
+          "realworld": 0
         },
         "unchecked_low_level_calls": {
-          "total": 42,
-          "solidifi": 24,
-          "realworld": 18
+          "total": 54,
+          "solidifi": 34,
+          "realworld": 20
         }
       }
     },
     {
       "fold": 4,
-      "n_train": 398,
-      "n_test": 197,
-      "test_solidifi": 140,
-      "test_realworld": 57,
+      "n_train": 500,
+      "n_test": 93,
+      "test_solidifi": 56,
+      "test_realworld": 37,
       "per_class": {
         "access_control": {
-          "total": 22,
-          "solidifi": 20,
-          "realworld": 2
+          "total": 11,
+          "solidifi": 8,
+          "realworld": 3
         },
         "arithmetic": {
-          "total": 36,
-          "solidifi": 20,
-          "realworld": 16
+          "total": 26,
+          "solidifi": 8,
+          "realworld": 18
         },
         "front_running": {
-          "total": 24,
-          "solidifi": 20,
-          "realworld": 4
-        },
-        "reentrancy": {
-          "total": 27,
-          "solidifi": 20,
-          "realworld": 7
-        },
-        "time_manipulation": {
-          "total": 20,
-          "solidifi": 20,
+          "total": 8,
+          "solidifi": 8,
           "realworld": 0
         },
+        "reentrancy": {
+          "total": 14,
+          "solidifi": 8,
+          "realworld": 6
+        },
+        "time_manipulation": {
+          "total": 10,
+          "solidifi": 8,
+          "realworld": 2
+        },
         "unchecked_low_level_calls": {
-          "total": 68,
-          "solidifi": 40,
-          "realworld": 28
+          "total": 24,
+          "solidifi": 16,
+          "realworld": 8
         }
       }
     },
     {
       "fold": 5,
-      "n_train": 541,
-      "n_test": 54,
-      "test_solidifi": 14,
-      "test_realworld": 40,
+      "n_train": 519,
+      "n_test": 74,
+      "test_solidifi": 28,
+      "test_realworld": 46,
       "per_class": {
         "access_control": {
-          "total": 6,
-          "solidifi": 2,
-          "realworld": 4
+          "total": 11,
+          "solidifi": 4,
+          "realworld": 7
         },
         "arithmetic": {
-          "total": 21,
-          "solidifi": 2,
-          "realworld": 19
+          "total": 17,
+          "solidifi": 4,
+          "realworld": 13
         },
         "front_running": {
-          "total": 2,
-          "solidifi": 2,
-          "realworld": 0
+          "total": 11,
+          "solidifi": 4,
+          "realworld": 7
         },
         "reentrancy": {
-          "total": 8,
-          "solidifi": 2,
-          "realworld": 6
+          "total": 13,
+          "solidifi": 4,
+          "realworld": 9
         },
         "time_manipulation": {
-          "total": 5,
-          "solidifi": 2,
-          "realworld": 3
+          "total": 6,
+          "solidifi": 4,
+          "realworld": 2
         },
         "unchecked_low_level_calls": {
-          "total": 12,
-          "solidifi": 4,
+          "total": 16,
+          "solidifi": 8,
           "realworld": 8
         }
       }
@@ -297,74 +299,74 @@
   ],
   "test_fold_sizes_by_repeat_seed": {
     "42": [
-      88,
-      115,
       141,
-      197,
-      54
+      108,
+      177,
+      93,
+      74
     ],
     "43": [
-      147,
-      136,
-      116,
-      88,
-      108
+      158,
+      118,
+      111,
+      122,
+      84
     ],
     "44": [
-      63,
-      103,
-      134,
-      150,
-      145
+      153,
+      135,
+      126,
+      108,
+      71
     ],
     "45": [
-      150,
-      125,
-      154,
-      61,
-      105
-    ],
-    "46": [
-      60,
-      126,
-      123,
-      139,
-      147
-    ],
-    "47": [
-      122,
-      114,
-      158,
       63,
+      125,
+      135,
+      132,
       138
     ],
+    "46": [
+      133,
+      112,
+      155,
+      73,
+      120
+    ],
+    "47": [
+      66,
+      130,
+      126,
+      152,
+      119
+    ],
     "48": [
-      115,
+      113,
       147,
-      134,
-      62,
-      137
+      155,
+      67,
+      111
     ],
     "49": [
-      64,
-      156,
-      120,
-      123,
-      132
+      62,
+      122,
+      142,
+      165,
+      102
     ],
     "50": [
-      137,
-      106,
-      62,
-      154,
-      136
+      74,
+      103,
+      104,
+      166,
+      146
     ],
     "51": [
-      131,
-      124,
-      152,
-      62,
-      126
+      129,
+      94,
+      68,
+      158,
+      144
     ]
   }
 }
